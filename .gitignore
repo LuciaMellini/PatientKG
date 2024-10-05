@@ -1,0 +1,6 @@
+/PrimeKG
+/articles
+/code/env
+/__pycache__
+
+*.csv
