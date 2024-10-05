@@ -1,0 +1,6 @@
+igraph
+matplotlib
+networkx
+requests
+tqdm
+pandas

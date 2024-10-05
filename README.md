@@ -16,3 +16,8 @@ The goal is to develop an approach that integrates specific sample data with bro
 At the moment the repository is populated by:
 * `code` directory, containing the following:
     * `PrimeKG_Analysis/PrimeKGAnalysis.ipynb`, notebook used to understand PrimeKG's characteristics, including the degree distributions per node type and clusterability
+
+## Dependencies
+To install the dependencies required to run the code, use `pip`:
+
+```pip install -r requirements.txt```
