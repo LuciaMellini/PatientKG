@@ -1,6 +1,6 @@
 igraph
 matplotlib
 networkx
+pandas
 requests
 tqdm
-pandas

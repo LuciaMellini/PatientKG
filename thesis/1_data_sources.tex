@@ -1,1 +1,14 @@
-\chapter{Data sources}
+\chapter{Data sources}\label{data_sources}
+In this chapter we describe the PrimeKG knowledge graph\cite{ChandakPayal2023Bakg}, which we have used as the biomedical knowledge source in this work. Secondly, in Section~\ref{data_sources:patient_data}, we introduce the patient data chosen to train and evaluate the developed predictive models.
+
+\section{PrimeKG}\label{data_sources:primekg}
+
+PrimeKG is a multimodal knowledge graph for precision medicine analyses~\cite{ChandakPayal2023Bakg}\footnote{PrimeKG code is available at \url{https://github.com/mims-harvard/PrimeKG}}. It integrates 20 high-quality resources to describe 17.080 diseases with 4.050.249 relationships representing ten major biological scales, including disease-associated protein perturbations, biological processes and pathways, anatomical and phenotypic scales, and the entire range of approved drugs with their therapeutic action, considerably expanding previous efforts in disease-rooted knowledge graphs. PrimeKG contains an abundance of ‘indications’, ‘contradictions’, and ‘off-label use’ drug-disease edges that lack in other knowledge graphs and can support AI analyses of how drugs affect disease-associated networks. 
+The 129.375 nodes are subdivided according to the 10 different node types as shown in Table~\ref{tab:primekg_node_types}. The 4.050.249 edges are subdivided according to the 10 different edge types as shown in Table~\ref{tab:primekg_edge_types}.
+We list the node types and edge types in detail in Tables
+\input{figs/tabPrimeKGNodes.tex}
+\input{figs/tabPrimeKGEdges.tex}
+
+
+
+\section{Patient data}\label{data_sources:patient_data}
