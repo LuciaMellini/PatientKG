@@ -4,6 +4,7 @@
 **/__pycache__
 
 *.csv
+*.obo
 
 *.aux
 *.fdb_latexmk
@@ -14,3 +15,4 @@
 *.toc
 *.pdf
 *.bbl
+*.blg
