@@ -45,7 +45,7 @@ def links_per_node_type(edge_index, nodes):
     return edges_with_node_type.groupby(['x_node_type', 'y_node_type']).size().unstack(fill_value=0)
 
 
-def weighed_hypergraph_node_types(df):
+def weighed_hypergraph_node_types(df, radius):
 
     plt.figure(figsize=(13,8))
     G = nx.DiGraph()
@@ -83,7 +83,7 @@ def weighed_hypergraph_node_types(df):
 
     nx.draw_networkx_nodes(G, pos, node_size=200, node_color='lightblue')
     edge_weights = [d['weight'] for (_, _, d) in G.edges(data=True)]
-    nx.draw_networkx_edges(G, pos, arrowstyle='->', width=[w / 10 for w in edge_weights], edge_color="gray", connectionstyle='arc3,rad=0.2', arrowsize=15)
+    nx.draw_networkx_edges(G, pos, arrowstyle='->', width=[w / 10 for w in edge_weights], edge_color="gray", connectionstyle=f'arc3,rad={radius}', arrowsize=15)
 
     nx.draw_networkx_labels(G, pos, labels=new_labels, font_size=10)
 
