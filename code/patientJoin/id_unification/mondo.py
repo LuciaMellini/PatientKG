@@ -1,10 +1,18 @@
-import os
 import numpy as np
 import pandas as pd
 from mondo_obo_parser import OBOReader
+import os
 
 pth = "./mondo.obo"
-data = [*iter(OBOReader(pth))]
+class CustomOBOReader(OBOReader):
+    def _parse_term(self, term):
+        term_data = super()._parse_term(term)
+        if 'name' in term_data and isinstance(term_data['name'], list):
+            term_data['name'] = term_data['name'][0]
+        return term_data
+
+data = [*iter(CustomOBOReader(pth))]
+
 mondo_terms = pd.DataFrame([{'id':x.item_id, 
                              'name':x.name, 
                              'definition':x.definition,

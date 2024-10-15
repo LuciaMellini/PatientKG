@@ -89,6 +89,7 @@ class OBOReader(object):
         if rec_curr is not None:
             self._add_to_ref(rec_curr, line)
         else:
+            typedef_curr.name = None
             add_to_typedef(typedef_curr, line)
 
     def _init_obo_version(self, line):
@@ -115,6 +116,7 @@ class OBOReader(object):
         elif line[:8] == "alt_id: ":
             rec_curr.alt_ids.add(line[8+l:])
         elif line[:6] == "name: ":
+            rec_curr.name = None
             assert not rec_curr.name
             rec_curr.name = line[6:]
         elif line[:5] == "def: ": 
