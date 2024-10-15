@@ -30,7 +30,8 @@ def omim_ids(nodes):
     nodes['node_id'] = nodes['node_id'].astype(str)
     df_omim_xref['mondo_id'] = df_omim_xref['mondo_id'].astype(str)
     
-    df_omim_with_ontology = pd.merge(nodes[nodes['node_source']=='MONDO'], df_omim_xref, left_on='node_id', right_on='mondo_id', how='inner')
+    nodes_mondo = nodes[nodes['node_source']=='MONDO']
+    df_omim_with_ontology = pd.merge(nodes_mondo, df_omim_xref, left_on='node_id', right_on='mondo_id', how='inner')
     
     OMIM_code = lambda x: str(x['ontology']) + ":" + str(x['ontology_id'])
     replace_id_given_node_source(df_omim_with_ontology, 'MONDO', OMIM_code)
@@ -47,9 +48,14 @@ def omim_ids(nodes):
 if __name__ == '__main__':
     data_path = "."
     primekg = pd.read_csv('../../PrimeKG.csv', low_memory=False)
-    nodes = pd.concat([primekg.get(['x_id','x_type', 'x_name','x_source']).rename(columns={'x_id':'node_id', 'x_type':'node_type', 'x_name':'node_name','x_source':'node_source'}), 
-                   primekg.get(['y_id','y_type', 'y_name','y_source']).rename(columns={'y_id':'node_id', 'y_type':'node_type', 'y_name':'node_name','y_source':'node_source'})])
-    nodes = nodes.drop_duplicates().reset_index().drop('index',axis=1).reset_index().rename(columns={'index':'node_idx'})
+    nodes = pd.concat([primekg.get(['x_id','x_type', 'x_name','x_source'])
+                    .rename(columns={'x_id':'node_id', 'x_type':'node_type', 'x_name':'node_name','x_source':'node_source'}), 
+                    primekg.get(['y_id','y_type', 'y_name','y_source']) 
+                    .rename(columns={'y_id':'node_id', 'y_type':'node_type', 'y_name':'node_name','y_source':'node_source'})])
+    nodes = nodes \
+                .drop_duplicates().reset_index() \
+                .drop('index',axis=1).reset_index() \
+                .rename(columns={'index':'node_idx'})
     
     nodes = hpo_ids(nodes)
     nodes = omim_ids(nodes)
