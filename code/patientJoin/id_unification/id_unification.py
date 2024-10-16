@@ -1,7 +1,10 @@
 import pandas as pd
 import subprocess
 import numpy as np
-import warnings
+import os
+import sys
+sys.path.append('../..')
+from utils import *
 
 def replace_id_given_node_source(nodes, source, replace_function):
     nodes.loc[nodes['node_source'] == source, 'node_id'] = nodes.apply(replace_function, axis=1)
@@ -44,23 +47,34 @@ def omim_ids(nodes):
     columns_to_drop = [col for col in nodes_updated.columns if col.endswith('_y')]
     nodes_updated = nodes_updated.drop(columns=columns_to_drop)   
     return nodes_updated
+
+def replace_nodes_in_kg(kg, nodes):
+    new_primekg = kg.copy()
+    
+    new_primekg = new_primekg.drop(columns=['x_id','y_id'])
+    new_primekg = pd.merge(new_primekg, nodes[['node_idx', 'node_id']], left_on='x_index', right_on='node_idx', how='left')
+    new_primekg = pd.merge(new_primekg, nodes[['node_idx', 'node_id']], left_on='y_index', right_on='node_idx', how='left')
+    
+    return new_primekg
+    
+    
+
     
 if __name__ == '__main__':
     data_path = "."
-    primekg = pd.read_csv('../../PrimeKG.csv', low_memory=False)
-    nodes = pd.concat([primekg.get(['x_id','x_type', 'x_name','x_source'])
-                    .rename(columns={'x_id':'node_id', 'x_type':'node_type', 'x_name':'node_name','x_source':'node_source'}), 
-                    primekg.get(['y_id','y_type', 'y_name','y_source']) 
-                    .rename(columns={'y_id':'node_id', 'y_type':'node_type', 'y_name':'node_name','y_source':'node_source'})])
-    nodes = nodes \
-                .drop_duplicates().reset_index() \
-                .drop('index',axis=1).reset_index() \
-                .rename(columns={'index':'node_idx'})
+    primekg_file = './../../PrimeKG.csv'
+    primekg = pd.read_csv(primekg_file, low_memory=False)
     
-    nodes = hpo_ids(nodes)
-    nodes = omim_ids(nodes)
-     
-    nodes.to_csv('../nodes_with_ids.csv', index=False)
-    
+    if not os.path.exists(data_path + '/nodes_with_ids.csv'):
+        nodes = create_node_df(primekg)  
+        nodes = hpo_ids(nodes)
+        nodes = omim_ids(nodes)
+        
+    else:
+        nodes = pd.read_csv(data_path + '/nodes_with_ids.csv')
+        
+    print(primekg.head())
+    new_primekg = replace_nodes_in_kg(primekg, nodes)
+    new_primekg.to_csv(primekg_file, index=False)
     
     
