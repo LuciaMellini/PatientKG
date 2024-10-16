@@ -15,6 +15,7 @@ The goal is to develop an approach that integrates specific sample data with bro
 ## Contents
 At the moment the repository is populated by:
 * `code` directory, containing the following:
+    * `import_data.py`, script to import the data used by other programs  
     * `PrimeKG_Analysis/PrimeKGAnalysis.ipynb`, notebook used to understand PrimeKG's characteristics, including the degree distributions per node type and clusterability
     * `patientJoin/id_unification.py`, script to correct HPO and OMIM codes inside PrimeKG
     * `patientJoin/patientJoin.py`, script to integrate patient data into PrimeKG
