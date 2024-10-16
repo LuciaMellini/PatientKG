@@ -14,7 +14,10 @@ if __name__ == "__main__":
     directory = "./"
     filename = "PrimeKG.csv"
 
-    print("Importing PrimeKG...\n")
+    
     full_path = os.path.join(directory, filename)
     if not os.path.isfile(full_path):
+        print("Importing PrimeKG...\n")
         import_data("https://dataverse.harvard.edu/api/access/datafile/6180620", filename)
+    else:
+        print("PrimeKG already exists in the current directory.\n")
