@@ -3,14 +3,39 @@ from tqdm import tqdm
 import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
+import igraph as ig
 
-def import_data(url, output_path):
-    response = requests.get(url, stream=True)
-    total_size = int(response.headers.get('content-length', 0))
 
-    with open(output_path, 'wb') as file:
-        for data in tqdm(response.iter_content(chunk_size=1024), total=total_size//1024, unit='KB'):
-            file.write(data)
+def create_node_df(kg):
+    nodes = pd.concat([kg.get(['x_id','x_type', 'x_name','x_source']).rename(columns={'x_id':'node_id', 'x_type':'node_type', 'x_name':'node_name','x_source':'node_source'}), 
+                   kg.get(['y_id','y_type', 'y_name','y_source']).rename(columns={'y_id':'node_id', 'y_type':'node_type', 'y_name':'node_name','y_source':'node_source'})])
+    nodes = nodes.drop_duplicates().reset_index().drop('index',axis=1).reset_index().rename(columns={'index':'node_idx'})
+    return nodes
+
+def create_edge_df(kg, nodes):
+    edges = pd.merge(kg, nodes, 'left', left_on=['x_id','x_type', 'x_name','x_source'], right_on=['node_id','node_type','node_name','node_source'])
+    edges = edges.rename(columns={'node_idx':'x_idx'})
+    edges = pd.merge(edges, nodes, 'left', left_on=['y_id','y_type', 'y_name','y_source'], right_on=['node_id','node_type','node_name','node_source'])
+    edges = edges.rename(columns={'node_idx':'y_idx'})
+    edges = edges.get(['relation', 'display_relation','x_idx', 'y_idx'])
+    return edges
+
+def create_edge_index(edges):
+    return edges.get(['x_idx', 'y_idx']).values
+
+def dfs_to_graph(nodes, edges):
+    graph = ig.Graph()
+
+    graph.add_vertices(nodes['node_idx'])
+    for attribute in nodes.columns:
+        graph.vs[attribute] = nodes[attribute]
+        
+    edge_index = create_edge_index(edges)
+    graph.add_edges([tuple(x) for x in edge_index])
+    for attribute in edges.columns:
+        graph.es[attribute] = edges[attribute]
+
+    graph = graph.as_undirected(mode='collapse')
             
 
 def plot_degree_distribution(ax, graph, node_type):
@@ -46,7 +71,6 @@ def links_per_node_type(edge_index, nodes):
 
 
 def weighed_hypergraph_node_types(df, radius):
-
     plt.figure(figsize=(13,8))
     G = nx.DiGraph()
     for x_node in df.index:
