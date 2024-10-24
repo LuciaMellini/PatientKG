@@ -1,12 +1,11 @@
 import pandas as pd
 import argparse
-
-import sys
-sys.path.append('./../code')
-
-from GA4PHphenopackets import *
-from PrimeKG import *
 from idUnification import *
+import sys
+sys.path.append('..')
+from PrimeKG_utils import *
+from GA4PHphenopackets_utils import *
+
 
 def create_primekg_patient_nodes(patient_features):
     patient_nodes = []
@@ -92,7 +91,10 @@ if __name__ == "__main__":
         
     new_primekg = replace_nodes_in_kg(primekg, nodes)
     new_primekg.to_csv(primekg_path, index=False)
+    new_primekg_nodes = create_primekg_node_df(new_primekg).to_csv(primekg_path.replace('.csv', '_nodes.csv'), index=False)
+    new_primekg_edges = create_primekg_edge_df(new_primekg, new_primekg_nodes).to_csv(primekg_path.replace('.csv', '_edges.csv'), index=False)
     
+    sys.exit(0)
     print("Reading patient data...")
     patient_data = pd.read_csv(patient_data_path) \
                         .drop(columns=['source_type']).rename(columns={'source_id': 'patient_id'}) \

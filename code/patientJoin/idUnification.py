@@ -2,9 +2,6 @@ import pandas as pd
 import subprocess
 import numpy as np
 import os
-import sys
-sys.path.append('./../code')
-from PrimeKG import *
 
 def replace_id_given_node_source(nodes, source, replace_function):
     nodes.loc[nodes['node_source'] == source, 'node_id'] = nodes.apply(replace_function, axis=1)
@@ -24,7 +21,7 @@ def hpo_ids(nodes):
     return nodes_updated
     
 def omim_ids(nodes):
-    mondo_path = './patientJoin/idUnification/'
+    mondo_path = './idUnification/'
     if not os.path.exists(mondo_path + 'mondo_references.csv'):
         subprocess.run(['bash', mondo_path + 'mondo_resource.sh'])
     
