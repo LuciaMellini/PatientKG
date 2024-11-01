@@ -21,6 +21,7 @@ def dfs_to_graph(nodes, edges):
         graph.es[attribute] = edges[attribute]
 
     graph = graph.as_undirected(mode='collapse')
+    return graph
             
 
 def plot_degree_distribution(ax, graph, node_type):
@@ -54,28 +55,27 @@ def links_per_node_type(edge_index, nodes):
 
     return edges_with_node_type.groupby(['x_node_type', 'y_node_type']).size().unstack(fill_value=0)
 
-
 def weighed_hypergraph_node_types(df, radius):
-    plt.figure(figsize=(13,8))
-    G = nx.DiGraph()
-    for x_node in df.index:
-        for y_node in df.columns:
-            weight = df.loc[x_node, y_node]
-            if weight > 0:
-                G.add_edge(x_node, y_node, weight=weight)
-                
-    pos = {
-        "drug": (0, 3), 
-        "exposure": (4, 3),
-        "disease": (1, 1.5), 
-        "effect/phenotype": (0, 0), 
-        "gene/protein": (4, 0), 
-        "anatomy": (3, -1), 
-        "pathway": (5, -1),
-        "cellular_component": (5, 2), 
-        "molecular_function": (4, 2), 
-        "biological_process": (3, 2)
-    }
+    edges = [
+        ('drug', 'disease'), ('drug', 'gene/protein'), 
+        ('exposure', 'disease'), ('exposure', 'biological_process'), 
+        ('exposure', 'cellular_component'), ('exposure', 'molecular_function'), 
+        ('gene/protein', 'biological_process'), ('gene/protein', 'cellular_component'), 
+        ('gene/protein', 'molecular_function'), ('disease', 'gene/protein'), 
+        ('effect/phenotype', 'disease'), ('effect/phenotype', 'gene/protein'), 
+        ('gene/protein', 'anatomy'), ('gene/protein', 'pathway')
+    ]
+
+    g = ig.Graph()
+
+    nodes = df.index.tolist()
+    g.add_vertices(nodes)
+
+    edges = [(x, y) for x in df.index for y in df.columns if df.at[x, y] > 0]
+    # Remove duplicate edges considering (x, y) and (y, x) as the same edge
+    #edges = list(set(tuple(sorted(edge)) for edge in edges))
+    weights = [df.at[x, y] for x, y in edges]
+    g.add_edges(edges)
 
     new_labels = {
         "drug": "drugs",
@@ -89,23 +89,44 @@ def weighed_hypergraph_node_types(df, radius):
         "molecular_function": "MF", 
         "biological_process": "BP"
     }
-    
-    color_dict = {
-    'drug': 'brown', 'disease': 'yellow', 'effect/phenotype': 'pink', 'exposure': 'lightyellow',
-    'gene/protein': 'purple', 'pathway': 'lightpink', 'anatomy': 'red',
-    'biological_process': 'orange', 'cellular_component': 'coral', 'molecular_function': 'salmon'
+
+    # Define the positions for each node
+    pos = {
+        "drug": (0, 3), 
+        "exposure": (4, 3),
+        "disease": (1, 1.5), 
+        "effect/phenotype": (0, 0), 
+        "gene/protein": (4, 0), 
+        "anatomy": (3, -1), 
+        "pathway": (5, -1),
+        "cellular_component": (5, 2), 
+        "molecular_function": (4, 2), 
+        "biological_process": (3, 2)
     }
-    colors = color_dict.values()
 
-    nx.draw_networkx_nodes(G, pos, node_size=200, node_color=colors)
-    edge_weights = [d['weight'] for (_, _, d) in G.edges(data=True)]
-    nx.draw_networkx_edges(G, pos, arrowstyle='->', width=[w / 10 for w in edge_weights], edge_color="gray", connectionstyle=f'arc3,rad={radius}', arrowsize=15)
+    # Set node colors (optional: to match your previous example)
+    color_dict = {
+        'drug': 'brown', 'disease': 'yellow', 'effect/phenotype': 'pink', 'exposure': 'lightyellow',
+        'gene/protein': 'purple', 'pathway': 'lightpink', 'anatomy': 'red',
+        'biological_process': 'orange', 'cellular_component': 'coral', 'molecular_function': 'salmon'
+    }
+    colors = [color_dict[node] for node in nodes]
 
-    nx.draw_networkx_labels(G, pos, labels=new_labels, font_size=10)
+    # Convert pos dictionary to a list of tuples matching igraph layout format
+    layout = [pos[node] for node in nodes]
 
-    plt.axis('off')
+    # Plot the graph using the predefined layout
+    fig, ax = plt.subplots(figsize=(8, 8))
+    min_weight, max_weight = min(weights), max(weights)
+    normalized_weights = [(w - min_weight) / (max_weight - min_weight) for w in weights]
+
+
+    edge_colors = [str(w) for w in normalized_weights]
+    edge_colors = [f'rgba(0, 0, 0, {w})' for w in edge_colors]
+    ig.plot(g, target=ax, layout=layout, vertex_label=[new_labels[node] for node in nodes], vertex_color=colors, 
+            vertex_size=40, edge_color=edge_colors, edge_width=3, edge_curved=radius, edge_loop_size=-1.5)
+
     plt.show()
-
 
 def clustering_info(graph, clustering_method_func):
     clustering = clustering_method_func()
