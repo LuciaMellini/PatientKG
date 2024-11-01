@@ -4,3 +4,5 @@ networkx
 pandas
 requests
 tqdm
+grape
+graphviz
