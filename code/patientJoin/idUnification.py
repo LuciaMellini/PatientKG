@@ -46,8 +46,7 @@ def omim_ids(nodes):
     return nodes_updated
 
 def replace_nodes_in_kg(kg, nodes):
-    new_primekg = kg.copy()
-    
+    new_primekg = kg
     new_primekg = new_primekg.drop(columns=['x_id','y_id'])
     new_primekg = new_primekg.merge(nodes[['node_idx', 'node_id']], left_on='x_index', right_on='node_idx', how='left')
     new_primekg = new_primekg.merge(nodes[['node_idx', 'node_id']], left_on='y_index', right_on='node_idx', how='left')

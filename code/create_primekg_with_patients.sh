@@ -1,5 +1,5 @@
-# echo Data import
-# python import_data.py -o PrimeKG.csv
+echo Data import
+python import_data.py -o PrimeKG.csv
 
 echo Join patient data to PrimeKG
 cd patientJoin

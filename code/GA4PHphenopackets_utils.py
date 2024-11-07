@@ -1,8 +1,8 @@
 def df_patient_connection(patient_data, conn_name):
-    patient_hps = patient_data[patient_data['dest_type'] == conn_name] \
+    patient_conn = patient_data[patient_data['dest_type'] == conn_name] \
                     .drop(columns = 'dest_type') \
                     .rename(columns={'dest_id': f'{conn_name}_id', 'dest_label': f'{conn_name}_name'})
-    return patient_hps
+    return patient_conn
 
 def df_patient_features(patient_data, conn_names):
     patient_features = patient_data[~patient_data['dest_type'].isin(conn_names)] \
