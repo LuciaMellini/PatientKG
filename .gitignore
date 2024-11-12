@@ -3,4 +3,15 @@
 /code/env
 /__pycache__
 
+/thesis/abstract*
+
+*.aux
+*.bbl
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.pdf
+
+
 *.csv
