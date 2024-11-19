@@ -1,9 +1,12 @@
 /PrimeKG
 /articles
 /code/env
-/__pycache__
+/code/data
+*/__pycache__
 
 /thesis/abstract*
+
+
 
 *.aux
 *.bbl
@@ -12,6 +15,9 @@
 *.log
 *.out
 *.pdf
-
+*.blg
+*.synctex.gz
+*.toc
 
 *.csv
+*.tsv
