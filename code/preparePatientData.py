@@ -27,9 +27,8 @@ if __name__ == "__main__":
     
     print("Reading and manipulating patient data...")
     patient_data = pd.read_csv(patient_data_path) \
-                        .drop(columns=['source_type', 'Unnamed: 0']).rename(columns={'source_id': 'patient_id'}) 
-    patient_data['patient_idx'] = pd.factorize(patient_data['patient_id'])[0]                       
-
+                        .drop(columns=['source_type', 'Unnamed: 0']).rename(columns={'source_id': 'patient_id'})                     
+    
     patient_data = polish_patient_source(patient_data)
     
     print("Creating patient connections...") 
@@ -37,8 +36,9 @@ if __name__ == "__main__":
     patient_conn = pd.DataFrame()
     for conn in conns:
         patient_conn = pd.concat([df_patient_connection(patient_data, conn), patient_conn], ignore_index=True)
+        
     if output_connections:        
-        patient_conn.to_csv(output_connections)
+        patient_conn.to_csv(output_connections, index = False)
         print(f"Output saved to {output_connections}")
         
         

@@ -13,10 +13,9 @@ if __name__ =="__main__":
                     
     patient_omim_mapped = patient_omim_mapped[patient_conn.columns]
     patient_other = patient_conn[~patient_conn['dest_id'].str.startswith('OMIM:')]
-    print(len(patient_conn))
     
-    
-    patient_conn = pd.concat([patient_omim_mapped, patient_other])
-    print(len(patient_conn))
-    
+    patient_conn = pd.concat([patient_omim_mapped, patient_other])    
     patient_conn.to_csv(data_path + 'patient_connections.csv', index=False)
+    
+    
+#patient_conn from 7165 to 71629 due to missing references from OMIM to MONDO
