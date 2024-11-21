@@ -11,13 +11,6 @@ def plot_distribution(ax, values, y_scale = 'linear'):
     ax.plot(range(0, len(values)), sorted(values, reverse=True))
     ax.set_xticks([])
     
-    
-def links_per_node_type(edges, nodes):
-    edges_with_node_type = edges.merge(nodes[['name', 'type']], left_on='subject', right_on='name', how='left')
-    edges_with_node_type = edges_with_node_type.rename(columns={'type': 'x_type'}).drop(columns=['name'])
-    edges_with_node_type = edges_with_node_type.merge(nodes[['name', 'type']], left_on='object', right_on='name', how='left')
-    edges_with_node_type = edges_with_node_type.rename(columns={'type': 'y_type'}).drop(columns=['name'])
-    return edges_with_node_type.groupby(['x_type', 'y_type']).size().unstack(fill_value=0)
 
 def weighed_hypergraph_node_types(df, layout):
     g = ig.Graph(directed=True)
@@ -71,3 +64,20 @@ def get_grape_graph(nodes, edges, name, directed=True):
         name = name
     )
     return g
+
+def plot_node_type_distribution(type_counts):
+    types = list(type_counts.index)
+    counts = type_counts.tolist()
+
+    plt.figure(figsize=(8, 12))
+    plt.barh(types[::-1], counts[::-1])
+    
+    plt.xlabel('Types')
+    plt.ylabel('Count')
+    plt.xscale('log')
+    plt.title('Distribution of Types')
+    plt.show()
+    
+def plot_type_distribution_with_components(data):
+    ax = data.iloc[::-1].plot.barh(stacked=True, figsize=(10, 20))
+    ax.set_xscale('log')
