@@ -28,3 +28,12 @@ def get_n_edges_for_node_type(edges, nodes):
     edges_with_node_type = edges_with_node_type.merge(nodes[['name', 'type']], left_on='object', right_on='name', how='left')
     edges_with_node_type = edges_with_node_type.rename(columns={'type': 'y_type'}).drop(columns=['name'])
     return edges_with_node_type.groupby(['x_type', 'y_type']).size().unstack(fill_value=0)
+
+def remove_node_type(nodes, edges, node_type):
+    nodes_filtered = nodes[nodes['type'] != node_type]
+    edges_filtered = edges[edges['subject'].isin(nodes_filtered['name']) & edges['object'].isin(nodes_filtered['name'])]
+    return nodes_filtered, edges_filtered
+
+def change_nodes_type(nodes, old_type, new_type):
+    nodes.loc[nodes['type'] == old_type, 'type'] = new_type
+    return nodes

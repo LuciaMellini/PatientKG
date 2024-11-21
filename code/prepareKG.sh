@@ -8,3 +8,6 @@ python omimMondoMap.py
 
 echo Merging patients to knowledge graph
 python patientJoin.py ./data/nodesL.csv ./data/edgesL.csv ./data/patient_connections.csv -okgn ./data/nodes_with_patients.csv -okge ./data/edges_with_patients.csv 
+
+echo Filtering and adjusting node types
+python filterAdjustNodeTypes.py ./data/nodes_with_patients.csv ./data/edges_with_patients.csv -on ./data/nodes_filtered.csv -oe ./data/edges_filtered.csv
