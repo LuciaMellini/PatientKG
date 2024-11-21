@@ -1,5 +1,6 @@
 import argparse
 import pandas as pd
+from KG_utils import *
 
 def parse_input():
     parser = argparse.ArgumentParser(description="Merge patient data with PrimeKG")
@@ -33,15 +34,16 @@ def create_patient_nodes(patient_conn):
 def create_patient_edges(patient_conn, nodes):
     nodes['name_copy'] =  nodes['name']
     nodes['name'] = nodes['name'].apply(purl_to_id)
-    edges_new = nodes.merge(patient_conn, left_on = 'name', right_on = 'dest_id')
-    print(edges_new.head8)
-    return pd.DataFrame()
+    edges_new = nodes.merge(patient_conn, left_on = 'name', right_on = 'dest_id')              
+    print(edges_new.columns)
+    return edges_new
     
 def create_kg_with_patients(nodes, edges, patient_conn):
     patient_nodes = create_patient_nodes(patient_conn)
     new_nodes = pd.concat([nodes, patient_nodes])
     patient_edges = create_patient_edges(patient_conn, new_nodes)
-    return new_nodes, pd.concat([edges, patient_edges])
+    new_edges = pd.concat([edges, patient_edges])
+    return new_nodes, new_edges
     
 if __name__=='__main__':
 
@@ -50,7 +52,10 @@ if __name__=='__main__':
     print("Reading KG...") 
     nodes = pd.read_csv(node_path, low_memory=False)
     edges = pd.read_csv(edge_path, low_memory=False)
-    
+    print("Reading patient data...")
     patient_conn = pd.read_csv(patient_data_path, low_memory=False)
     
-    #create_kg_with_patients(nodes, edges, patient_conn)
+    print("Merging KG with patients...")
+    nodes_with_patients, edges_with_patients = create_kg_with_patients(nodes, edges, patient_conn)
+    print(nodes_with_patients.head())
+    print(edges_with_patients.head())
