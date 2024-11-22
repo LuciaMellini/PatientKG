@@ -29,6 +29,8 @@ if __name__ == "__main__":
     patient_data = pd.read_csv(patient_data_path) \
                         .drop(columns=['source_type', 'Unnamed: 0']).rename(columns={'source_id': 'patient_id'})                     
     
+    print(patient_data.head())
+    patient_data = standardize_patient_id(patient_data)
     patient_data = polish_patient_source(patient_data)
     
     print("Creating patient connections...") 
