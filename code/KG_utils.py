@@ -34,6 +34,11 @@ def remove_node_type(nodes, edges, node_type):
     edges_filtered = edges[edges['subject'].isin(nodes_filtered['name']) & edges['object'].isin(nodes_filtered['name'])]
     return nodes_filtered, edges_filtered
 
-def change_nodes_type(nodes, old_type, new_type):
+def remove_node(nodes, edges, node_name):
+    nodes_filtered = nodes[nodes['name'] != node_name]
+    edges_filtered = edges[(edges['subject'] != node_name) & (edges['object'] != node_name)]
+    return nodes_filtered, edges_filtered
+
+def rename_node_type(nodes, old_type, new_type):
     nodes.loc[nodes['type'] == old_type, 'type'] = new_type
     return nodes

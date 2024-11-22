@@ -23,20 +23,33 @@ if __name__ == '__main__':
     nodes = pd.read_csv(node_path, low_memory=False)
     edges = pd.read_csv(edge_path,  low_memory=False)
     node_types = nodes['type'].unique()
-    node_types_to_keep = ['Gene','Genomic feature','Protein','Disease','GO', 'Phenotype']
+    
+    node_types_to_keep = ['Gene','Genomic feature','Protein','Disease','GO', 'Phenotype', 'Patient']
     node_types_to_remove = [t for t in node_types if t not in node_types_to_keep]
     
+    node_types_to_rename = {'Gene': 'Genomic feature'}
+    
     nodes_kept, edges_kept = nodes, edges
-    for type in node_types_to_remove:
-        print("Removing nodes of type", type)
-        nodes_kept, edges_kept = remove_node_type(nodes_kept, edges_kept, type)
+    for t in node_types_to_remove:
+        print("Removing nodes of type", t)
+        nodes_kept, edges_kept = remove_node_type(nodes_kept, edges_kept, t)
+        
+    nodes = nodes_kept
+    edges = edges_kept
+    
+    nodes_renamed = nodes
+    for old_t, new_t in node_types_to_rename.items():
+        print('Renaming nodes of type', old_t, 'to', new_t)
+        nodes_renamed = rename_node_type(nodes_renamed, old_t, new_t)  
+        
+    nodes = nodes_renamed  
         
     if output_nodes:
-        nodes_kept.to_csv(output_nodes, index=False)
+        nodes.to_csv(output_nodes, index=False)
         print(f"Output nodes saved to {output_nodes}")
         
     if output_edges:        
-        edges_kept.to_csv(output_edges, index=False)
+        edges.to_csv(output_edges, index=False)
         print(f"Output edges saved to {output_edges}")
         
     
