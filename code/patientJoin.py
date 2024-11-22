@@ -38,10 +38,16 @@ def create_patient_edges(patient_conn, nodes):
     edges_new = nodes.merge(patient_conn[['patient_id', 'dest_id']], left_on = 'name', right_on = 'dest_id', how='right') \
                 .drop(columns = ['type', 'dest_id'])   \
                 .rename(columns = {'name': 'object', 'patient_id': 'subject'}) 
-   
     edges_new.loc[edges_new['object'].str.contains('HP'), 'predicate'] = 'Has phenotype'
     edges_new.loc[edges_new['object'].str.contains('MONDO'), 'predicate'] = 'Has disease'
+    
+    phenotype_edges = edges_new[edges_new['predicate'] == 'Has phenotype'].copy()
     edges_new['object'] = edges_new['name_copy']
+    
+    phenotype_edges['predicate'] = 'Phenotype of'
+    phenotype_edges = phenotype_edges.rename(columns={'subject': 'object', 'object': 'subject'})
+    phenotype_edges['subject'] = phenotype_edges['name_copy']
+    edges_new = pd.concat([edges_new, phenotype_edges])
     edges_new = edges_new.drop(columns = ['name_copy'])    
 
     return edges_new
@@ -53,6 +59,16 @@ def create_kg_with_patients(nodes, edges, patient_conn):
     patient_edges = create_patient_edges(patient_conn, new_nodes)
     new_edges = pd.concat([edges, patient_edges])
     return new_nodes, new_edges
+
+def remove_patients_without_disease(nodes, edges):
+    patient_nodes = nodes[nodes['type'] == 'Patient']['name']
+    disease_connections = edges[edges['predicate'] == 'Has disease']['subject']
+    patients_without_disease = patient_nodes[~patient_nodes.isin(disease_connections)]
+    print(len(patients_without_disease))
+    for patient in patients_without_disease:
+        nodes, edges = remove_node(nodes, edges, patient)
+        print(f"Removed patient {patient} without disease connection")
+    return nodes, edges
     
 if __name__=='__main__':
 
@@ -67,10 +83,18 @@ if __name__=='__main__':
     print("Merging KG with patients...")
     nodes_with_patients, edges_with_patients = create_kg_with_patients(nodes, edges, patient_conn)
     
+    nodes = nodes_with_patients
+    edges = edges_with_patients
     
+    print("Removing patients without disease edge")
+    nodes_patients_with_disease, edges_patients_with_disease = remove_patients_without_disease(nodes, edges)
+    
+    nodes = nodes_patients_with_disease
+    edges = edges_patients_with_disease
+        
     if output_kg_nodes:
         print(f"Saving output kg nodes to {output_kg_nodes}")
-        nodes_with_patients.to_csv(output_kg_nodes, index=False)
+        nodes.to_csv(output_kg_nodes, index=False)
     if output_kg_edges:
         print(f"Saving output kg edges to {output_kg_edges}")
-        edges_with_patients.to_csv(output_kg_edges, index=False)
+        edges.to_csv(output_kg_edges, index=False)
