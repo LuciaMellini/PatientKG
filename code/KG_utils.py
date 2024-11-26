@@ -1,4 +1,4 @@
-purl_to_id =  lambda s: s.split("/")[-1].replace('_', ':')[:-1]
+import pandas as pd
 
 def get_node_types_for_edge_type(edges, nodes, edge_type):
     edges_with_types = edges[edges['predicate'] == edge_type]
@@ -21,6 +21,12 @@ def get_node_types_for_edge_type(edges, nodes, edge_type):
     
     return node_type_counts.sort_values(ascending=False)
 
+def create_sex_nodes():    
+    return pd.DataFrame({
+        'name': ['<http://purl.obolibrary.org/obo/NCIT_C20197>', '<http://purl.obolibrary.org/obo/NCIT_C16576>'],
+        'type': ['Person', 'Person']
+    })
+    
 
 def get_n_edges_for_node_type(edges, nodes):
     edges_with_node_type = edges.merge(nodes[['name', 'type']], left_on='subject', right_on='name', how='left')
@@ -42,3 +48,9 @@ def remove_node(nodes, edges, node_name):
 def rename_node_type(nodes, old_type, new_type):
     nodes.loc[nodes['type'] == old_type, 'type'] = new_type
     return nodes
+
+def add_nodes(nodes, new_nodes):
+    return pd.concat([nodes, new_nodes])
+
+def add_edges(edges, new_edges):
+    return pd.concat([edges, new_edges])

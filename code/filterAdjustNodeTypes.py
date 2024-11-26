@@ -24,7 +24,7 @@ if __name__ == '__main__':
     edges = pd.read_csv(edge_path,  low_memory=False)
     node_types = nodes['type'].unique()
     
-    node_types_to_keep = ['Gene','Genomic feature','Protein','Disease','GO', 'Phenotype', 'Patient']
+    node_types_to_keep = ['Gene','Genomic feature','Protein','Disease','GO', 'Phenotype', 'Article', 'Person']
     node_types_to_remove = [t for t in node_types if t not in node_types_to_keep]
     
     node_types_to_rename = {'Gene': 'Genomic feature'}
