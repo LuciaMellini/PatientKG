@@ -1,0 +1,83 @@
+\chapter{Knowledge graphs}\label{kgs}
+In this chapter, we present the theoretical background and applications of knowledge graphs. We begin by defining what knowledge graphs are in Section~\ref{kgs:definition}, followed by the applications of these graphs in biomedicine in Section~\ref{kgs:biomed}.
+
+\section{Definition}\label{definition}
+The concept of knowledge graphs has been a topic of research particularly within the Semantic Web community since Google's 2012 announcement of its Knowledge Graph. Despite their extensive use, a unified definition remains elusive. Various definitions from literature show significant variation in scope and focus. Below, we present a selection of them to illustrate this diversity:
+\begin{description}
+    \item[Structure and Composition] Paulheim~\cite{Paulheim2016KnowledgeGR} proposed a minimal set of characteristics that distinguish KGs as graph-based knowledge representations: ``A knowledge graph (i) mainly describes real world entities and their interrelations, organized in a graph, (ii) defines possible classes and relations of entities in a schema, (iii) allows for potentially interrelating arbitrary entities with each other and (iv) covers various topical domains''. Similarly, the Journal of Web Semantics describes KGs as ``graphs of entities, their types, and relationships between entities''~\cite{Kroetsch2016knowledge}
+    \item[Domain-Specific Networks] The Semantic Web Company highlights the flexibility of KGs to represent domain-specific networks, incorporating not just concepts but also instances like documents and datasets.~\cite{Blumauer2014knowledge}
+    \item[Formal Definition] As proposed by Färber et al. in~\cite{Farber2016linked} a knowledge graph can be defined as an RDF graph. An RDF graph consists of a set of triples $(s, p, o)$ is an ordered set of the following RDF terms: 
+    \begin{itemize}
+        \item a subject $s\in U \cup B$
+        \item an object $o\in U\cup B\cup L$
+        \item a predicate $p\in U$
+    \end{itemize}
+    An RDF term is either a URI $u\in U$, a blank node $b\in B$, or a literal $l\in L$.
+    \item[Dynamic Extraction] Pujara et al.~\cite{Pujara2013KGIdentification} focus on the automatic extraction of knowledge from the web in the form of facts that are interrelated.
+\end{description}
+
+This diversity in definitions hinders precise discussions and comparative research, emphasizing the need for a common, comprehensive definition to advance the field. To address this gap, the authors in~\cite{Ehrlinger2016TowardsAD} propose a new definition of a knowledge graph: 
+\begin{center}
+    \begin{quote}
+        \textit{A knowledge graph acquires and integrates information into an ontology and applies a reasoner to derive new knowledge.}
+    \end{quote}
+\end{center}
+This definition seeks to unify the understanding of KGs by emphasizing three critical features:
+\begin{description}
+    \item[Information integration] KGs collect, extract, and integrate information from multiple external sources, making them dynamic and scalable.
+    \item[Reasoning capabilities] The inclusion of a reasoning engine allows KGs to infer new knowledge from existing data, which elevates their functionality beyond a static repository.
+    \item[Ontological foundation] KGs are built on an ontological foundation, which provides a formal structure for representing knowledge and relationships between entities. 
+\end{description}
+
+The authors stress that a KG is more complex than a traditional knowledge base or ontology, as it combines these features to support automated reasoning and dynamic knowledge integration. The size of the KG is considered less critical compared to its functional capabilities.
+
+\section{Data graphs}
+The foundation of any knowledge graph lies in abstracting data into a graph structure, resulting in an initial data graph. Modelling data in this way offers more flexibility for integrating new sources of data compared to the standard relational model, where a schema must be defined upfront and followed at each step. While other structured data models such as trees offer similar flexibility, graphs do not require organizing the data hierarchically and allow cycles to be represented and queried. Here, we explore a range of graph-structured data models frequently used to represent such graphs in practice.~\cite{Hogan2021KGs}
+
+\subsection{Models}
+We begin by describing the main graph structures used to represent knowledge graphs. In the following paragraphs, we define progressively more complex models. For each of them we also provide a formal definition in line with conventions used in~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}, that refer to a single countable set of constants denoted with $\textbf{Con}$.
+
+\subsubsection{Directed edge-labelled graphs}
+A directed edge-labelled graph is defined as a set of nodes and a set of directed labelled edges between these nodes. In KGs, the nodes represent entities and the edges represent relationships between these entities. A standardized data model based on directed edge-labelled graphs is the Resource Description Framework (RDF)~\cite{Cyganiak2014rdf}, which has been recommended by the W3C. The RDF model defines different types of nodes, including Internationalized Resource Identifiers (IRIs) [134], which allow for global identification of entities on the Web; literals, which allow for representing strings (with or without language tags) and other datatype values (integers, dates, etc.); and blank nodes, which are anonymous nodes that are not assigned an identifier.
+
+\begin{definition}[Directed edge-labelled graph]\label{def:directed-edge-labelled-graph}
+A directed edge-labelled graph is a tuple $G = (V, E, L)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge labels, and $E \subseteq V \times L \times V$ is a set of edges.
+\end{definition}
+This definition does not impose $L$ and $V$ to be disjoint, so technically any label can be used for nodes and edges alike. Also some labels could exist without the presence of an associated edge.
+
+\subsubsection{Heterogeneous graphs}
+Heterogeneous graphs are a generalization of directed edge-labelled graphs that allow nodes and edges to be of different \textit{types}. An edge can be \textit{homogeneous} if it connects two nodes of the same type, or \text{Heterogeneous} if it is between nodes of different types. This labelling allows to partition the graph according to the node types, which can be useful for machine learning tasks.
+
+\begin{definition}[Heterogeneous graph]\label{def:heterogeneous-graph}
+A heterogeneous graph is a tuple $G = (V, E, L, l)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge and node labels, $E \subseteq V \times L \times V$ is a set of edges, and $l : V \to L$ maps each node to a label.
+\end{definition}
+This description allow for nods to be in various relations of different types.
+
+\subsubsection{Property graphs}
+The structure provide additional flexibility when modelling data as a graph. It adds to heterogeneous graphs a set of \text{property-value} pairs and it allows to associate a \textit{label} to both nodes and edges.
+
+\begin{definition}[Property graph]\label{def:property-graph}
+A property graph is a tuple $G = (V, E, L, P, U, e, l, p)$, where
+\begin{itemize}
+    \item $V \subseteq \textbf{Con}$ is a set of node ids,
+    \item $E \subseteq \textbf{Con}$ is a set of edge ids,
+    \item $L \subseteq \textbf{Con}$ is a set of labels,
+    \item $P \subseteq \textbf{Con}$ is a set of properties,
+    \item $U \subseteq \textbf{Con}$ is a set of values,
+    \item $e : E \to V \times V$ maps an edge id to a pair of node ids,
+    \item $l : V \cup E \to 2^L$ maps a node or edge id to a set of labels, and
+    \item $p : V \cup E \to 2^{P \times U}$ maps a node or edge id to a set of property–value pairs.
+\end{itemize}
+\end{definition}
+
+It is always possible to translate a property graph from and into a directed edge-labelled graph without information loss. Though the models are equivalent, directed edge-labelled models offer a more minimal model, while property graphs are more flexible. Often the choice boils down to practical factors, such as the available implementations of the various models.
+
+\subsubsection{Other graph data models}
+One can extend the structures shown above, for example by introducing \textit{complex nodes}  or \textit{hypernodes} that could contain individual edges or nested graphs. Conversely \textit{hypergraphs} define \textit{complex edges} that may connect more than two nodes.
+
+
+
+
+
+\subsection{Applications in biomedicine}\label{kgs:biomed}
+% The result is most often used in application scenarios that involve integrating, managing and extracting value from diverse sources of data at large scale [387]. Employing a graph-based abstraction of knowledge has numerous benefits in such settings when compared with, for example, a relational model or NoSQL alternatives. Graphs allow maintainers to postpone the definition of a schema, allowing the data – and its scope – to evolve in a more flexible manner than typically possible in a relational setting, particularly for capturing incomplete knowledge [3]. Unlike (other) NoSQL models, specialised graph query languages support not only standard relational operators (joins, unions, projections, etc.), but also navigational operators for recursively finding entities connected through arbitrary-length paths [16]. Standard knowledge representation formalisms – such as ontologies [70, 239, 366] and rules [254, 288] – can be employed to define and reason about the semantics of the terms used to label and describe the nodes and edges in the graph. Scalable frameworks for graph analytics [335, 503, 563] can be leveraged for computing centrality, clustering, summarisation, etc., in order to gain insights about the domain being described. Various representations have also been developed that support applying machine learning techniques directly over graphs [549, 559].~\cite{Hogan2021KGs}
