@@ -35,7 +35,10 @@ The authors stress that a KG is more complex than a traditional knowledge base o
 The foundation of any knowledge graph lies in abstracting data into a graph structure, resulting in an initial data graph. Modelling data in this way offers more flexibility for integrating new sources of data compared to the standard relational model, where a schema must be defined upfront and followed at each step. While other structured data models such as trees offer similar flexibility, graphs do not require organizing the data hierarchically and allow cycles to be represented and queried. Here, we explore a range of graph-structured data models frequently used to represent such graphs in practice.~\cite{Hogan2021KGs}
 
 \subsection{Models}
-We begin by describing the main graph structures used to represent knowledge graphs. In the following paragraphs, we define progressively more complex models. For each of them we also provide a formal definition in line with conventions used in~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}, that refer to a single countable set of constants denoted with $\textbf{Con}$.
+We begin by describing the main graph structures used to represent knowledge graphs. In the following paragraphs, we define progressively more complex models. 
+
+\medskip
+For each of them we also provide a formal definition in line with conventions used in~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}, that refer to a single countable set of constants denoted with $\textbf{Con}$.
 
 \subsubsection{Directed edge-labelled graphs}
 A directed edge-labelled graph is defined as a set of nodes and a set of directed labelled edges between these nodes. In KGs, the nodes represent entities and the edges represent relationships between these entities. A standardized data model based on directed edge-labelled graphs is the Resource Description Framework (RDF)~\cite{Cyganiak2014rdf}, which has been recommended by the W3C. The RDF model defines different types of nodes, including Internationalized Resource Identifiers (IRIs) [134], which allow for global identification of entities on the Web; literals, which allow for representing strings (with or without language tags) and other datatype values (integers, dates, etc.); and blank nodes, which are anonymous nodes that are not assigned an identifier.
@@ -75,7 +78,53 @@ It is always possible to translate a property graph from and into a directed edg
 \subsubsection{Other graph data models}
 One can extend the structures shown above, for example by introducing \textit{complex nodes}  or \textit{hypernodes} that could contain individual edges or nested graphs. Conversely \textit{hypergraphs} define \textit{complex edges} that may connect more than two nodes.
 
+\subsection{Querying}
+A number of practical languages have been proposed for querying graphs~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}, including the SPARQL query language for RDF graphs~\cite{Harris2013SPARQL}; and Cypher~\cite{Francis2018Cypher}, Gremlin~\cite{Rodriguez2015Gremlin}, and G-CORE~\cite{Angles2018G-CORE} for querying property graphs. Underlying these query languages are some common primitives, including graph patterns, relational operators, path expressions, and more besides~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}. We now describe these core features for querying graphs in turn, starting with graph patterns. 
 
+\medskip
+We formalize the notions of graph patterns for both directed edge-labelled graphs and property graphs. In such definitions, $\textbf{Var}$ refers to a countably infinite set of \textit{variables} ranging over the set of constants in $\textbf{Con}$. We refer generically to constants and variables as \textit{terms}, denoted as $\textbf{Term} = \textbf{Con} \cup \textbf{Var}$.
+
+\subsubsection{Graph patterns}
+At the basis of every structured query language of graphs are \textit{(basic) graph patterns}, that are related with the graph model that is being queried. In directed edge-labelled graphs the terms are its nodes and edge labels. The terms in property graphs are its ids, labels, properties and values.
+
+Terms are divided into constants and variables. The graph pattern is evaluated against the data graph by generating mappings from the variables of the graph pattern to constants in the data graph, such that the image of the graph pattern obtained by assigning constants to the variables is contained within the graph. 
+
+\begin{definition}[Directed edge-labelled graph pattern]\label{def:directed-edge-labelled-graph-pattern}
+    We define a directed edge-labelled graph pattern as a tuple $Q = (V, E, L)$, where $V \subseteq \textbf{Term}$ is a set of node terms, $L \subseteq \textbf{Term}$ is a set of edge terms, and $E \subseteq V \times L \times V$ is a set of edges (triple patterns).
+\end{definition}
+
+The graph patterns for property graphs are defined analogously as in Definition~\ref{def:directed-edge-labelled-graph-pattern}, allowing variables in any position.
+    
+\begin{definition}[Property graph pattern]\label{def:property-graph-pattern}
+    We define a property graph pattern as a tuple $Q = (V, E, L, P, U, e, l, p)$, where
+    \begin{itemize}
+        \item $V \subseteq \textbf{Term}$ is a set of node id terms,
+        \item $E \subseteq \textbf{Term}$ is a set of edge id terms,
+        \item $L \subseteq \textbf{Term}$ is a set of label terms,
+        \item $P \subseteq \textbf{Term}$ is a set of property terms,
+        \item $U \subseteq \textbf{Term}$ is a set of value terms,
+        \item $e : E \to V \times V$ maps an edge id term to a pair of node id terms,
+        \item $l : V \cup E \to 2^L$ maps a node or edge id term to a set of label terms, and
+        \item $p : V \cup E \to 2^{P \times U}$ maps a node or edge id term to a set of pairs of property–value terms.
+    \end{itemize}
+    \end{definition}
+
+The variables in the graph patterns could be mapped to the same constant terms, but this may not be desirable for all applications. So, various semantics have been proposed to define the evaluation of graph patterns. The most important are:
+\begin{description}
+    \item[Homomorphism-based semantics] 
+    allows multiple variables to be mapped to the same term.
+    \item[Isomorphic-based semantics] requires nodes and edge variables to be mapped to distinct terms. 
+\end{description}
+Different practical languages adopt different semantics: SPARQL is based on homomorphism-based semantics, whilst Cypher has chosen for isomorphic-based semantics on edges.
+
+
+
+
+\subsubsection{Complex graph patterns}
+
+\subsubsection{Navigational graph patterns}
+
+\subsubsection{Other features}
 
 
 
