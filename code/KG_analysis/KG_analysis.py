@@ -6,8 +6,10 @@ from grape.embedders import Node2VecSkipGramEnsmallen
 import os
 import pandas as pd
 
-def plot_distribution(ax, values, y_scale = 'linear'):   
+def plot_distribution(ax, values, x_scale = 'linear', y_scale = 'linear'):   
+    ax.set_xscale(x_scale)
     ax.set_yscale(y_scale)
+    
     ax.plot(range(0, len(values)), sorted(values, reverse=True))
     ax.set_xticks([])
     
@@ -34,22 +36,33 @@ def weighed_hypergraph_node_types(df, layout):
 
     plt.show()
     
-def get_and_save_embedding(graph, name):    
-    embedding=Node2VecSkipGramEnsmallen(
-                embedding_size=10,
-                return_weight=.25,
-                explore_weight=4, 
-                #change_node_type_weight=.0001,
-                #change_edge_type_weight=param[3],
-            ).fit_transform(graph)
-    emb_file = f'{name}.csv'
+def get_embedding(graph, emb_file_name = None):    
+    emb_file = f'{emb_file_name}.csv'
     if not os.path.exists(emb_file):
+        embedding=Node2VecSkipGramEnsmallen(
+                    embedding_size=10,
+                    return_weight=.25,
+                    explore_weight=4, 
+                    #change_node_type_weight=.0001,
+                    #change_edge_type_weight=param[3],
+                )
+    
         emb = embedding.fit_transform(graph)
         emb_dump = emb.dump()
-        emb_dump['node_embeddings'][0].to_csv(f'{name}.csv', index=False)
+        emb_dump['node_embeddings'][0].to_csv(emb_file, index=False)
     else:
         emb = pd.read_csv(emb_file).to_numpy()
     return emb
+
+def visualize_embedding(emb, g):
+    vis = GraphVisualizer(
+                graph=g,
+                automatically_display_on_notebooks=False,
+                decomposition_method = 'TSNE',
+            )
+    vis.fit_nodes(emb)
+    vis.plot_node_types()
+    plt.show()
 
 def get_grape_graph(nodes, edges, name, directed=True):
     g = Graph.from_pd(
