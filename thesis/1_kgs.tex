@@ -1,5 +1,5 @@
 \chapter{Knowledge graphs}\label{kgs}
-In this chapter, we present the theoretical background and applications of knowledge graphs. We begin by defining what knowledge graphs are in Section~\ref{kgs:definition}, followed by the applications of these graphs in biomedicine in Section~\ref{kgs:biomed}.
+In this chapter, we present the theoretical background and applications of knowledge graphs. We begin by defining what knowledge graphs are in Section~\ref{definition}, followed by the applications of these graphs in biomedicine in Section~\ref{kgs:biomed}.
 
 \section{Definition}\label{definition}
 The concept of knowledge graphs has been a topic of research particularly within the Semantic Web community since Google's 2012 announcement of its Knowledge Graph. Despite their extensive use, a unified definition remains elusive. Various definitions from literature show significant variation in scope and focus. Below, we present a selection of them to illustrate this diversity:
@@ -19,7 +19,7 @@ The concept of knowledge graphs has been a topic of research particularly within
 This diversity in definitions hinders precise discussions and comparative research, emphasizing the need for a common, comprehensive definition to advance the field. To address this gap, the authors in~\cite{Ehrlinger2016TowardsAD} propose a new definition of a knowledge graph: 
 \begin{center}
     \begin{quote}
-        \textit{A knowledge graph acquires and integrates information into an ontology and applies a reasoner to derive new knowledge.}
+        \term{A knowledge graph acquires and integrates information into an ontology and applies a reasoner to derive new knowledge.}
     \end{quote}
 \end{center}
 This definition seeks to unify the understanding of KGs by emphasizing three critical features:
@@ -49,7 +49,7 @@ A directed edge-labelled graph is a tuple $G = (V, E, L)$, where $V \subseteq \t
 This definition does not impose $L$ and $V$ to be disjoint, so technically any label can be used for nodes and edges alike. Also some labels could exist without the presence of an associated edge.
 
 \subsubsection{Heterogeneous graphs}
-Heterogeneous graphs are a generalization of directed edge-labelled graphs that allow nodes and edges to be of different \textit{types}. An edge can be \textit{homogeneous} if it connects two nodes of the same type, or \text{Heterogeneous} if it is between nodes of different types. This labelling allows to partition the graph according to the node types, which can be useful for machine learning tasks.
+Heterogeneous graphs are a generalization of directed edge-labelled graphs that allow nodes and edges to be of different \term{types}. An edge can be \term{homogeneous} if it connects two nodes of the same type, or \text{Heterogeneous} if it is between nodes of different types. This labelling allows to partition the graph according to the node types, which can be useful for machine learning tasks.
 
 \begin{definition}[Heterogeneous graph]\label{def:heterogeneous-graph}
 A heterogeneous graph is a tuple $G = (V, E, L, l)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge and node labels, $E \subseteq V \times L \times V$ is a set of edges, and $l : V \to L$ maps each node to a label.
@@ -57,7 +57,7 @@ A heterogeneous graph is a tuple $G = (V, E, L, l)$, where $V \subseteq \textbf{
 This description allow for nods to be in various relations of different types.
 
 \subsubsection{Property graphs}
-The structure provide additional flexibility when modelling data as a graph. It adds to heterogeneous graphs a set of \text{property-value} pairs and it allows to associate a \textit{label} to both nodes and edges.
+The structure provide additional flexibility when modelling data as a graph. It adds to heterogeneous graphs a set of \text{property-value} pairs and it allows to associate a \term{label} to both nodes and edges.
 
 \begin{definition}[Property graph]\label{def:property-graph}
 A property graph is a tuple $G = (V, E, L, P, U, e, l, p)$, where
@@ -76,16 +76,16 @@ A property graph is a tuple $G = (V, E, L, P, U, e, l, p)$, where
 It is always possible to translate a property graph from and into a directed edge-labelled graph without information loss. Though the models are equivalent, directed edge-labelled models offer a more minimal model, while property graphs are more flexible. Often the choice boils down to practical factors, such as the available implementations of the various models.
 
 \subsubsection{Other graph data models}
-One can extend the structures shown above, for example by introducing \textit{complex nodes}  or \textit{hypernodes} that could contain individual edges or nested graphs. Conversely \textit{hypergraphs} define \textit{complex edges} that may connect more than two nodes.
+One can extend the structures shown above, for example by introducing \term{complex nodes}  or \term{hypernodes} that could contain individual edges or nested graphs. Conversely \term{hypergraphs} define \term{complex edges} that may connect more than two nodes.
 
 \subsection{Querying}
 A number of practical languages have been proposed for querying graphs~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}, including the SPARQL query language for RDF graphs~\cite{Harris2013SPARQL}; and Cypher~\cite{Francis2018Cypher}, Gremlin~\cite{Rodriguez2015Gremlin}, and G-CORE~\cite{Angles2018G-CORE} for querying property graphs. Underlying these query languages are some common primitives, including graph patterns, relational operators, path expressions, and more besides~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}. We now describe these core features for querying graphs in turn, starting with graph patterns. 
 
 \medskip
-We formalize the notions of graph patterns for both directed edge-labelled graphs and property graphs. In such definitions, $\textbf{Var}$ refers to a countably infinite set of \textit{variables} ranging over the set of constants in $\textbf{Con}$. We refer generically to constants and variables as \textit{terms}, denoted as $\textbf{Term} = \textbf{Con} \cup \textbf{Var}$.
+We formalize the notions of graph patterns for both directed edge-labelled graphs and property graphs. In such definitions, $\textbf{Var}$ refers to a countably infinite set of \term{variables} ranging over the set of constants in $\textbf{Con}$. We refer generically to constants and variables as \term{terms}, denoted as $\textbf{Term} = \textbf{Con} \cup \textbf{Var}$. For simplicity's sake we do not specify the formal definition for the extensions of graph patterns.
 
 \subsubsection{Graph patterns}
-At the basis of every structured query language of graphs are \textit{(basic) graph patterns}, that are related with the graph model that is being queried. In directed edge-labelled graphs the terms are its nodes and edge labels. The terms in property graphs are its ids, labels, properties and values.
+At the basis of every structured query language of graphs are \term{(basic) graph patterns}, that are related with the graph model that is being queried. In directed edge-labelled graphs the terms are its nodes and edge labels. The terms in property graphs are its ids, labels, properties and values.
 
 Terms are divided into constants and variables. The graph pattern is evaluated against the data graph by generating mappings from the variables of the graph pattern to constants in the data graph, such that the image of the graph pattern obtained by assigning constants to the variables is contained within the graph. 
 
@@ -110,23 +110,38 @@ The graph patterns for property graphs are defined analogously as in Definition~
     \end{definition}
 
 The variables in the graph patterns could be mapped to the same constant terms, but this may not be desirable for all applications. So, various semantics have been proposed to define the evaluation of graph patterns. The most important are:
-\begin{description}
-    \item[Homomorphism-based semantics] 
-    allows multiple variables to be mapped to the same term.
-    \item[Isomorphic-based semantics] requires nodes and edge variables to be mapped to distinct terms. 
-\end{description}
+\begin{itemize}
+    \item\term{homomorphism-based semantics} allows multiple variables to be mapped to the same term.
+    \item\term{isomorphic-based semantics} requires nodes and edge variables to be mapped to distinct terms. 
+\end{itemize}
 Different practical languages adopt different semantics: SPARQL is based on homomorphism-based semantics, whilst Cypher has chosen for isomorphic-based semantics on edges.
 
-
-
-
 \subsubsection{Complex graph patterns}
+Given an input graph, a graph pattern transforms it into a table of results. These can be considered using relational algebra to form more complex queries on the graph. Recall that relational algebra consists of various operations:
+\begin{itemize}
+    \item Unary operations:
+    \begin{itemize}
+        \item \term{projection ($\pi$)} to output a subset of columns,
+        \item \term{selection ($\sigma$)} to output a subset of rows,
+        \item \term{column renaming ($\rho$)}.
+    \end{itemize}
+    \item Binary operations:
+    \begin{itemize}
+        \item \term{union ($\cup$)} to merge rows of two tables,
+        \item \term{difference (-)} to remove rows from one table that are present in another,
+        \item \term{joins ($\bowtie$)} to combine rows from two tables based on a related column.
+    \end{itemize}
+\end{itemize}
+Graph patterns can be expressed in a subset of relational algebra formed by $\pi$, $\sigma$, $rho$ and $\bowtie$. Specifically only variables not fixed to a constant can be projected in a graph pattern.
+
+We omit the formal definitions of complex graph patterns and their evaluation since they are a direct consequence of the definitions of the operators listed above.~\footnote{For a more detailed explanation, see Appendix B.2.2 in~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}.}
 
 \subsubsection{Navigational graph patterns}
+The key difference between graph guery languages id the ability to include \term{path expressions} in queries. A path expression $r$ is a regular expression that allows matching arbitrary length paths between nodes, which is expressed as a \text{regular path query} $(x,r,y)$, where $x$ and $y$ are terms (even the same term). Regular path queries are defined recursively as follows: the base path expression is where $r$ is a constant edge label. If $r$ is a path expression, then also its inverse $r^-$ and Kleene star $r^*$ are also path expressions. Furthermore if $r_1$ and $r_2$ are path expressions, then also their disjuntion $r_1mid r_2$ and their concatenation $r_1\cdot r_2$ are path expressions.
 
-\subsubsection{Other features}
+There are various semantics to evaluate regular path queries to account for graphs containing loops, that when evaluated could return infinite matching regular path expressions. For example one can return only the shortest paths or paths without repeated nodes and edges (as done in Cypher). Another option is to return the finite set of pairs of nodes connected by a matching path instead of specifying the entire path.
 
+Also here we refer to~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases} Appendix B.2.3 for the formal inductive definition.
 
-
-\subsection{Applications in biomedicine}\label{kgs:biomed}
+\section{Applications in biomedicine}\label{kgs:biomed}
 % The result is most often used in application scenarios that involve integrating, managing and extracting value from diverse sources of data at large scale [387]. Employing a graph-based abstraction of knowledge has numerous benefits in such settings when compared with, for example, a relational model or NoSQL alternatives. Graphs allow maintainers to postpone the definition of a schema, allowing the data – and its scope – to evolve in a more flexible manner than typically possible in a relational setting, particularly for capturing incomplete knowledge [3]. Unlike (other) NoSQL models, specialised graph query languages support not only standard relational operators (joins, unions, projections, etc.), but also navigational operators for recursively finding entities connected through arbitrary-length paths [16]. Standard knowledge representation formalisms – such as ontologies [70, 239, 366] and rules [254, 288] – can be employed to define and reason about the semantics of the terms used to label and describe the nodes and edges in the graph. Scalable frameworks for graph analytics [335, 503, 563] can be leveraged for computing centrality, clustering, summarisation, etc., in order to gain insights about the domain being described. Various representations have also been developed that support applying machine learning techniques directly over graphs [549, 559].~\cite{Hogan2021KGs}
