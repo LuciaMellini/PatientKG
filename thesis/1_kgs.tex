@@ -31,10 +31,10 @@ This definition seeks to unify the understanding of KGs by emphasizing three cri
 
 The authors stress that a KG is more complex than a traditional knowledge base or ontology, as it combines these features to support automated reasoning and dynamic knowledge integration. The size of the KG is considered less critical compared to its functional capabilities.
 
-\section{Data graphs}
+\section{Data graphs}\label{data-graphs}
 The foundation of any knowledge graph lies in abstracting data into a graph structure, resulting in an initial data graph. Modelling data in this way offers more flexibility for integrating new sources of data compared to the standard relational model, where a schema must be defined upfront and followed at each step. While other structured data models such as trees offer similar flexibility, graphs do not require organizing the data hierarchically and allow cycles to be represented and queried. Here, we explore a range of graph-structured data models frequently used to represent such graphs in practice.~\cite{Hogan2021KGs}
 
-\subsection{Models}
+\subsection{Models}\label{models}
 We begin by describing the main graph structures used to represent knowledge graphs. In the following paragraphs, we define progressively more complex models. 
 
 \medskip
@@ -78,7 +78,7 @@ It is always possible to translate a property graph from and into a directed edg
 \subsubsection{Other graph data models}
 One can extend the structures shown above, for example by introducing \term{complex nodes}  or \term{hypernodes} that could contain individual edges or nested graphs. Conversely \term{hypergraphs} define \term{complex edges} that may connect more than two nodes.
 
-\subsection{Querying}
+\subsection{Querying}\label{querying}
 A number of practical languages have been proposed for querying graphs~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}, including the SPARQL query language for RDF graphs~\cite{Harris2013SPARQL}; and Cypher~\cite{Francis2018Cypher}, Gremlin~\cite{Rodriguez2015Gremlin}, and G-CORE~\cite{Angles2018G-CORE} for querying property graphs. Underlying these query languages are some common primitives, including graph patterns, relational operators, path expressions, and more besides~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}. We now describe these core features for querying graphs in turn, starting with graph patterns. 
 
 \medskip
@@ -142,6 +142,28 @@ The key difference between graph guery languages id the ability to include \term
 There are various semantics to evaluate regular path queries to account for graphs containing loops, that when evaluated could return infinite matching regular path expressions. For example one can return only the shortest paths or paths without repeated nodes and edges (as done in Cypher). Another option is to return the finite set of pairs of nodes connected by a matching path instead of specifying the entire path.
 
 Also here we refer to~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases} Appendix B.2.3 for the formal inductive definition.
+
+\section{Schema, identity, context}\label{schema-identity-context}
+In this section we describe various enhancements and extensions of the data graph – relating to schema, identity and context – that provide additional structures for accumulating knowledge. Henceforth, we refer to a \term{data graph} as a collection of data represented as nodes and edges using one of the models discussed in~\ref{data-graphs}. We refer to a \term{knowledge graph} as a data graph potentially enhanced with representations of schema, identity, context, ontologies and/or rules. These additional representations may be embedded in the data graph, or layered above it.
+
+\subsection{Schema}\label{schema}
+One of the benefits of modelling data as graphs – versus, for example, the relational model – is the option to forgo or postpone the definition of a schema. However, when modelling data as graphs, schemata can be used to prescribe a high-level structure and/or semantics that the graph follows or should follow. We discuss three types of graph schemata: \term{semantic}, \term{validating}, and \term{emergent}.
+
+\subsubsection{Semantic schema}
+A semantic schema allows for defining the meaning of high-level terms (aka \term{vocabulary} or \term{terminology}) used in the graph, which facilitates reasoning over graphs using those terms. We may notice some natural groupings of nodes based on the types of entities to which they refer. We may thus decide to define \term{classes} to denote these groupings. Additionally, we may observe some natural relations between some of these classes that we would like to capture. A class hierarchy can be established where children are defined to be \term{subclasses} of their parents. This allows for inferring higher-level class memberships from lower-level ones.
+
+Aside from classes, we may also wish to define the semantics of edge labels, also known as \term{properties}. Properties can be organized into hierarchies, where specific properties are \term{sub-properties} of more general ones. We can further define the \term{domain} and \term{range} of properties, indicating the class(es) of entities for nodes from which and to which edges with that property extend, respectively. This allows for inferring class memberships based on property relations.
+
+A prominent standard for defining a semantic schema for (RDF) graphs is the \textit{RDF Schema} (RDFS) standard~\cite{Brickley2014RDFSchema1.1}, which allows for defining subclasses, subproperties, domains, and ranges amongst the classes and properties used in an RDF graph, where such definitions can be serialised as a graph. We illustrate the semantics of these features in Table~\ref{tab:semanticSchemaFeatures}. These definitions can then be embedded into a data graph. More generally, the semantics of terms used in a graph can be defined in much more depth than seen here, as is supported by the Web Ontology Language (OWL) standard~\cite{Hitzler2014OWLPrimer} for RDF graphs.
+
+Semantic schema are typically defined for incomplete graph data, here the absence of an edge between two nodes does not mean that the relation does not hold in the real world. Therefor one can not assume that the graph is a complete description of the world. These systems are said to adopt the \term{Open World Assumption} (OWA), in opposition to the \term{Closed World Assumption} (CWA) , that allows to state with certainty if a relation exists in the world. A consequence of CWA is that the addition of an edge to the data graph may contradict what was previously assumed to be false (due to missing information), whereas with OWA, a statement that is proven false continues to be false with the addition of more edges.
+
+\subsubsection{Validating schema}
+
+
+\input{figs/tabSemanticSchemaFeatures}
+
+
 
 \section{Applications in biomedicine}\label{kgs:biomed}
 % The result is most often used in application scenarios that involve integrating, managing and extracting value from diverse sources of data at large scale [387]. Employing a graph-based abstraction of knowledge has numerous benefits in such settings when compared with, for example, a relational model or NoSQL alternatives. Graphs allow maintainers to postpone the definition of a schema, allowing the data – and its scope – to evolve in a more flexible manner than typically possible in a relational setting, particularly for capturing incomplete knowledge [3]. Unlike (other) NoSQL models, specialised graph query languages support not only standard relational operators (joins, unions, projections, etc.), but also navigational operators for recursively finding entities connected through arbitrary-length paths [16]. Standard knowledge representation formalisms – such as ontologies [70, 239, 366] and rules [254, 288] – can be employed to define and reason about the semantics of the terms used to label and describe the nodes and edges in the graph. Scalable frameworks for graph analytics [335, 503, 563] can be leveraged for computing centrality, clustering, summarisation, etc., in order to gain insights about the domain being described. Various representations have also been developed that support applying machine learning techniques directly over graphs [549, 559].~\cite{Hogan2021KGs}
