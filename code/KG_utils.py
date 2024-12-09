@@ -1,25 +1,21 @@
 import pandas as pd
 
-def get_node_types_for_edge_type(edges, nodes, edge_type):
+def get_node_types_count_for_edge_type(nodes, edges, edge_type):
     edges_with_types = edges[edges['predicate'] == edge_type]
-    
-    source_types = edges_with_types.merge(
+    edges_with_node_types = edges_with_types.merge(
+        nodes[['name', 'type']], 
+        left_on='object',
+        right_on='name'
+    ).merge(
         nodes[['name', 'type']], 
         left_on='subject',
-        right_on='name'
-    )['type'].value_counts()
-        
+        right_on='name',
+        suffixes = ('_object', '_subject')
+
+    ).drop(columns = ['name_object', 'name_subject', 'subject', 'object'])
     
-    target_types = edges_with_types.merge(
-        nodes[['name', 'type']],
-        left_on='object', 
-        right_on='name'
-    )['type'].value_counts()
     
-    node_type_counts = source_types.add(target_types, fill_value=0)
-    node_type_counts.name = edge_type
-    
-    return node_type_counts.sort_values(ascending=False)
+    return edges_with_node_types.groupby(list(edges_with_node_types.columns)).size().reset_index(name='Count')
 
 def create_sex_nodes():    
     return pd.DataFrame({
