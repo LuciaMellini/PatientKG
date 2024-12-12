@@ -35,7 +35,7 @@ if __name__ == '__main__':
     
     nodes = pd.concat([nodes, sex_nodes])
     
-    article_nodes = patient_conn[patient_conn['dest_type'] == 'article'].rename(columns={'dest_id': 'name', 'dest_type':'type'})[['name', 'type']]
+    article_nodes = patient_conn[patient_conn['dest_type'] == 'article'].rename(columns={'dest_id': 'name', 'dest_type':'type'})[['name', 'type']].drop_duplicates()
     article_nodes['type'] = 'Article'
     
     nodes = pd.concat([nodes, article_nodes])
