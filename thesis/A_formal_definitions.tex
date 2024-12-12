@@ -1,0 +1,132 @@
+\chapter{Formal definitions}\label{app:formal-definitions}
+In order to keep the discussion accessible, the body of the paper explains of the main concepts and techniques associated with knowledge graphs. In this section, we complement the discussion of the paper with formal definitions.
+
+\section{Data graphs}\label{app:data-graphs}
+We define the graph data models in line with previous conventions (e.g.~\cite {Angles2017FoundationmodernQueryLnguagesforGraphDatabases}). These definitions use a single (countably) infinite set of constants denoted $\textbf{Con}$.
+
+
+\begin{definition}[Directed edge-labelled graph]\label{def:directed-edge-labelled-graph}
+    A directed edge-labelled graph is a tuple $G = (V, E, L)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge labels, and $E \subseteq V \times L \times V$ is a set of edges.
+\end{definition}
+
+This definition does not impose $L$ and $V$ to be disjoint, so technically any label can be used for nodes and edges alike. Also some labels could exist without the presence of an associated edge.
+
+
+\begin{definition}[Heterogeneous graph]\label{def:heterogeneous-graph}
+    A heterogeneous graph is a tuple $G = (V, E, L, l)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge and node labels, $E \subseteq V \times L \times V$ is a set of edges, and $l : V \to L$ maps each node to a label.
+    \end{definition}
+This description allow for nodes to be in various relations of different types.
+
+\begin{definition}[Property graph]\label{def:property-graph}
+    A property graph is a tuple $G = (V, E, L, P, U, e, l, p)$, where
+    \begin{itemize}
+        \item $V \subseteq \textbf{Con}$ is a set of node ids,
+        \item $E \subseteq \textbf{Con}$ is a set of edge ids,
+        \item $L \subseteq \textbf{Con}$ is a set of labels,
+        \item $P \subseteq \textbf{Con}$ is a set of properties,
+        \item $U \subseteq \textbf{Con}$ is a set of values,
+        \item $e : E \to V \times V$ maps an edge id to a pair of node ids,
+        \item $l : V \cup E \to 2^L$ maps a node or edge id to a set of labels, and
+        \item $p : V \cup E \to 2^{P \times U}$ maps a node or edge id to a set of property–value pairs.
+    \end{itemize}
+    \end{definition}
+
+\section{Querying}
+Here we formalize foundational notions relating to queries over graphs, starting with graph patterns, to which we later add relational-style operators and path expressions.
+
+\subsection{Graph patters}
+We formalize the notions of graph patterns for both directed edge-labelled graphs and property graphs. In such definitions, $\textbf{Var}$ refers to a countably infinite set of \term{variables} ranging over the set of constants in $\textbf{Con}$, with $\textbf{Var}\cap\textbf{Con}=\emptyset$. We refer generically to constants and variables as \term{terms}, denoted as $\textbf{Term} = \textbf{Con} \cup \textbf{Var}$. 
+
+\begin{definition}[Directed edge-labelled graph pattern]\label{def:directed-edge-labelled-graph-pattern}
+    We define a directed edge-labelled graph pattern as a tuple $Q = (V, E, L)$, where $V \subseteq \textbf{Term}$ is a set of node terms, $L \subseteq \textbf{Term}$ is a set of edge terms, and $E \subseteq V \times L \times V$ is a set of edges (triple patterns).
+\end{definition}
+
+The graph patterns for property graphs are defined analogously as in Definition~\ref{def:directed-edge-labelled-graph-pattern}, allowing variables in any position.
+    
+\begin{definition}[Property graph pattern]\label{def:property-graph-pattern}
+    We define a property graph pattern as a tuple $Q = (V, E, L, P, U, e, l, p)$, where
+    \begin{itemize}
+        \item $V \subseteq \textbf{Term}$ is a set of node id terms,
+        \item $E \subseteq \textbf{Term}$ is a set of edge id terms,
+        \item $L \subseteq \textbf{Term}$ is a set of label terms,
+        \item $P \subseteq \textbf{Term}$ is a set of property terms,
+        \item $U \subseteq \textbf{Term}$ is a set of value terms,
+        \item $e : E \to V \times V$ maps an edge id term to a pair of node id terms,
+        \item $l : V \cup E \to 2^L$ maps a node or edge id term to a set of label terms, and
+        \item $p : V \cup E \to 2^{P \times U}$ maps a node or edge id term to a set of pairs of property–value terms.
+    \end{itemize}
+\end{definition}
+
+\subsection{Evaluation of graph patterns}
+Towards defining the evaluation of a graph pattern, we first define a partial mapping $\mu : \textbf{Var} \to \textbf{Con}$ from variables to constants, whose domain (the set of variables for which it is defined) is denoted by $\text{dom}(\mu)$. Given a graph pattern $Q$, let $\textbf{Var}(Q)$ denote the set of all variables appearing in (some recursively nested element of) $Q$. Abusing notation, we denote by $\mu(Q)$ the image of $Q$ under $\mu$, meaning that any variable $v \in \textbf{Var}(Q) \cap \text{dom}(\mu)$ is replaced in $Q$ by $\mu(v)$. Observe that when $\textbf{Var}(Q) \subseteq \text{dom}(\mu)$, then $\mu(Q)$ is a data graph (in the corresponding model of $Q$).
+
+Next, we define the notion of containment between data graphs. For two directed edge-labelled graph patterns $G_1 = (V_1, E_1, L_1)$ and $G_2 = (V_2, E_2, L_2)$, we say that $G_1$ is a sub-graph of $G_2$, denoted $G_1 \subseteq G_2$, if and only if $V_1 \subseteq V_2$, $E_1 \subseteq E_2$, and $L_1 \subseteq L_2$. Conversely, in property graphs, nodes can often be defined without edges. For two property graphs $G_1 = (V_1, E_1, L_1, P_1, U_1, e_1, l_1, p_1)$ and $G_2 = (V_2, E_2, L_2, P_2, U_2, e_2, l_2, p_2)$, we say that $G_1$ is a sub-graph of $G_2$, denoted $G_1 \subseteq G_2$, if and only if $V_1 \subseteq V_2$, $E_1 \subseteq E_2$, $L_1 \subseteq L_2$, $P_1 \subseteq P_2$, $U_1 \subseteq U_2$, for all $x \in E_1$ it holds that $e_1(x) = e_2(x)$, and for all $y \in E_1 \cup V_1$ it holds that $l_1(y) \subseteq l_2(y)$ and $p_1(y) \subseteq p_2(y)$.
+
+We are now ready to define the evaluation of a graph pattern.
+
+\begin{definition}[Evaluation of a graph pattern]\label{def:evaluation-graph-pattern}
+    Let $Q$ be a graph pattern and let $G$ be a data graph. We then define the evaluation of graph pattern $Q$ over the data graph $G$ as the set of all mappings $\mu$ such that $\mu(Q) \subseteq G$.
+\end{definition}
+
+\begin{definition}[Complex graph pattern]\label{def:complex-graph-pattern}
+    Complex graph patterns are defined recursively:
+    \begin{itemize}
+        \item If $Q$ is a graph pattern, then $Q$ is a complex graph pattern.
+        \item If $Q$ is a complex graph pattern, and $V \subseteq \textbf{Var}(Q)$, then $\pi_V(Q)$ is a complex graph pattern.
+        \item If $Q$ is a complex graph pattern, and $R$ is a selection condition with boolean and equality connectives ($\land$, $\lor$, $\neg$, $=$), then $\sigma_R(Q)$ is a complex graph pattern.
+        \item If $Q_1$ and $Q_2$ are complex graph patterns, then $Q_1 \Join Q_2$, $Q_1 \cup Q_2$, $Q_1 - Q_2$ and $Q_1 \Rightarrow Q_2$ are also complex graph patterns.
+    \end{itemize}
+\end{definition}
+
+\begin{definition}[Complex graph pattern evaluation]\label{def:complex-graph-pattern-evaluation}
+    Given a complex graph pattern $Q$, if $Q$ is a graph pattern, then $Q(G)$ is defined per Definition~\ref{def:evaluation-graph-pattern}. Otherwise:
+    \begin{itemize}
+        \item $\pi_V(Q)(G) = \{\mu[V] \mid \mu \in Q(G)\}$
+        \item $\sigma_R(Q)(G) = \{\mu \mid \mu \in Q(G) \text{ and } \mu \models R\}$
+        \item $Q_1 \Join Q_2(G) = \{\mu_1 \cup \mu_2 \mid \mu_1 \in Q_1(G) \text{ and } \mu_2 \in Q_2(G) \text{ and } \mu_1 \sim \mu_2\}$
+        \item $Q_1 \cup Q_2(G) = \{\mu \mid \mu \in Q_1(G) \text{ or } \mu \in Q_2(G)\}$
+        \item $Q_1 - Q_2(G) = \{\mu \mid \mu \in Q_1(G) \text{ and } \mu \notin Q_2(G)\}$
+        \item $Q_1 \Rightarrow Q_2(G) = \{\mu \mid \mu \in Q_1(G) \text{ and } \nexists \mu_2 \in Q_2(G) \text{ such that } \mu \sim \mu_2\}$
+    \end{itemize}
+\end{definition}
+
+\begin{definition}[Path expression]\label{def:path-expression}
+    A constant (edge label) $c$ is a path expression. Furthermore:
+    \begin{itemize}
+        \item If $r$ is a path expression, then $r^{-1}$ (inverse) and $r^*$ (Kleene star) are path expressions.
+        \item If $r_1$ and $r_2$ are path expressions, then $r_1 \cdot r_2$ (concatenation) and $r_1 \mid r_2$ (disjunction) are path expressions.
+    \end{itemize}
+\end{definition}
+
+\begin{definition}[Path expression evaluation (directed edge-labelled graph)]\label{def:path-expression-evaluation}
+    Given a directed edge-labelled graph $G = (V, E, L)$ and a path expression $r$, we define the evaluation of $r$ over $G$, denoted $r[G]$, as follows:
+    \begin{itemize}
+        \item $r[G] = \{(u, v) \mid (u, r, v) \in E\}$ (for $r \in \textbf{Con}$)
+        \item $r^{-1}[G] = \{(u, v) \mid (v, u) \in r[G]\}$
+        \item $r_1 \mid r_2[G] = r_1[G] \cup r_2[G]$
+        \item $r_1 \cdot r_2[G] = \{(u, v) \mid \exists w \in V : (u, w) \in r_1[G] \text{ and } (w, v) \in r_2[G]\}$
+        \item $r^*[G] = V \cup \bigcup_{n \in \mathbb{N}^+} r^n[G]$
+    \end{itemize}
+    where by $r^n$ we denote the $n$th-concatenation of $r$ (e.g., $r^3 = r \cdot r \cdot r$).
+\end{definition}
+
+\begin{definition}[Regular path query]\label{def:regular-path-query}
+    A regular path query is a triple $(x, r, y)$ where $x, y \in \textbf{Con} \cup \textbf{Var}$ and $r$ is a path expression.
+\end{definition}
+
+\begin{definition}[Regular path query evaluation]\label{def:regular-path-query-evaluation}
+    Let $G$ denote a directed edge-labelled graph, $c, c_1, c_2 \in \textbf{Con}$ denote constants and $z, z_1, z_2 \in \textbf{Var}$ denote variables. Then the evaluation of a regular path query is defined as follows:
+    \begin{itemize}
+        \item $(c_1, r, c_2)(G) = \{\mu_\emptyset \mid (c_1, c_2) \in r[G]\}$
+        \item $(c, r, z)(G) = \{\mu \mid \text{dom}(\mu) = \{z\} \text{ and } (c, \mu(z)) \in r[G]\}$
+        \item $(z, r, c)(G) = \{\mu \mid \text{dom}(\mu) = \{z\} \text{ and } (\mu(z), c) \in r[G]\}$
+        \item $(z_1, r, z_2)(G) = \{\mu \mid \text{dom}(\mu) = \{z_1, z_2\} \text{ and } (\mu(z_1), \mu(z_2)) \in r[G]\}$
+    \end{itemize}
+    where $\mu_\emptyset$ denotes the empty mapping such that $\text{dom}(\mu) = \emptyset$ (the join identity).
+\end{definition}
+
+\begin{definition}[Navigational graph pattern]\label{def:navigational-graph-pattern}
+    If $Q$ is a graph pattern, then $Q$ is a navigational graph pattern. Furthermore, if $Q$ is a navigational graph pattern and $(x, r, y)$ is a regular path query, then $Q \Join (x, r, y)$ is a navigational graph pattern.
+\end{definition}
+
+

@@ -32,46 +32,21 @@ This definition seeks to unify the understanding of KGs by emphasizing three cri
 The authors stress that a KG is more complex than a traditional knowledge base or ontology, as it combines these features to support automated reasoning and dynamic knowledge integration. The size of the KG is considered less critical compared to its functional capabilities.
 
 \section{Data graphs}\label{data-graphs}
-The foundation of any knowledge graph lies in abstracting data into a graph structure, resulting in an initial data graph. Modelling data in this way offers more flexibility for integrating new sources of data compared to the standard relational model, where a schema must be defined upfront and followed at each step. While other structured data models such as trees offer similar flexibility, graphs do not require organizing the data hierarchically and allow cycles to be represented and queried. Here, we explore a range of graph-structured data models frequently used to represent such graphs in practice.~\cite{Hogan2021KGs}
+The foundation of any knowledge graph lies in abstracting data into a graph structure, resulting in an initial data graph. Modelling data in this way offers more flexibility for integrating new sources of data compared to the standard relational model, where a schema must be defined upfront and followed at each step. While other structured data models such as trees offer similar flexibility, graphs do not require organizing the data hierarchically and allow cycles to be represented and queried. Here, we explore a range of graph-structured data models frequently used to represent such graphs in practice.~\cite{Hogan2021KGs}. 
+
+For the concepts in the following sections we provide the formal definitions in Appendix~\ref{app:data-graphs}.
 
 \subsection{Models}\label{models}
 We begin by describing the main graph structures used to represent knowledge graphs. In the following paragraphs, we define progressively more complex models. 
 
-\medskip
-For each of them we also provide a formal definition in line with conventions used in~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}, that refer to a single countable set of constants denoted with $\textbf{Con}$.
-
 \subsubsection{Directed edge-labelled graphs}
 A directed edge-labelled graph is defined as a set of nodes and a set of directed labelled edges between these nodes. In KGs, the nodes represent entities and the edges represent relationships between these entities. A standardized data model based on directed edge-labelled graphs is the Resource Description Framework (RDF)~\cite{Cyganiak2014rdf}, which has been recommended by the W3C. The RDF model defines different types of nodes, including Internationalized Resource Identifiers (IRIs) [134], which allow for global identification of entities on the Web; literals, which allow for representing strings (with or without language tags) and other datatype values (integers, dates, etc.); and blank nodes, which are anonymous nodes that are not assigned an identifier.
-
-\begin{definition}[Directed edge-labelled graph]\label{def:directed-edge-labelled-graph}
-A directed edge-labelled graph is a tuple $G = (V, E, L)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge labels, and $E \subseteq V \times L \times V$ is a set of edges.
-\end{definition}
-This definition does not impose $L$ and $V$ to be disjoint, so technically any label can be used for nodes and edges alike. Also some labels could exist without the presence of an associated edge.
 
 \subsubsection{Heterogeneous graphs}
 Heterogeneous graphs are a generalization of directed edge-labelled graphs that allow nodes and edges to be of different \term{types}. An edge can be \term{homogeneous} if it connects two nodes of the same type, or \text{Heterogeneous} if it is between nodes of different types. This labelling allows to partition the graph according to the node types, which can be useful for machine learning tasks.
 
-\begin{definition}[Heterogeneous graph]\label{def:heterogeneous-graph}
-A heterogeneous graph is a tuple $G = (V, E, L, l)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge and node labels, $E \subseteq V \times L \times V$ is a set of edges, and $l : V \to L$ maps each node to a label.
-\end{definition}
-This description allow for nods to be in various relations of different types.
-
 \subsubsection{Property graphs}
 The structure provide additional flexibility when modelling data as a graph. It adds to heterogeneous graphs a set of \text{property-value} pairs and it allows to associate a \term{label} to both nodes and edges.
-
-\begin{definition}[Property graph]\label{def:property-graph}
-A property graph is a tuple $G = (V, E, L, P, U, e, l, p)$, where
-\begin{itemize}
-    \item $V \subseteq \textbf{Con}$ is a set of node ids,
-    \item $E \subseteq \textbf{Con}$ is a set of edge ids,
-    \item $L \subseteq \textbf{Con}$ is a set of labels,
-    \item $P \subseteq \textbf{Con}$ is a set of properties,
-    \item $U \subseteq \textbf{Con}$ is a set of values,
-    \item $e : E \to V \times V$ maps an edge id to a pair of node ids,
-    \item $l : V \cup E \to 2^L$ maps a node or edge id to a set of labels, and
-    \item $p : V \cup E \to 2^{P \times U}$ maps a node or edge id to a set of property–value pairs.
-\end{itemize}
-\end{definition}
 
 It is always possible to translate a property graph from and into a directed edge-labelled graph without information loss. Though the models are equivalent, directed edge-labelled models offer a more minimal model, while property graphs are more flexible. Often the choice boils down to practical factors, such as the available implementations of the various models.
 
@@ -81,33 +56,11 @@ One can extend the structures shown above, for example by introducing \term{comp
 \subsection{Querying}\label{querying}
 A number of practical languages have been proposed for querying graphs~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}, including the SPARQL query language for RDF graphs~\cite{Harris2013SPARQL}; and Cypher~\cite{Francis2018Cypher}, Gremlin~\cite{Rodriguez2015Gremlin}, and G-CORE~\cite{Angles2018G-CORE} for querying property graphs. Underlying these query languages are some common primitives, including graph patterns, relational operators, path expressions, and more besides~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}. We now describe these core features for querying graphs in turn, starting with graph patterns. 
 
-\medskip
-We formalize the notions of graph patterns for both directed edge-labelled graphs and property graphs. In such definitions, $\textbf{Var}$ refers to a countably infinite set of \term{variables} ranging over the set of constants in $\textbf{Con}$. We refer generically to constants and variables as \term{terms}, denoted as $\textbf{Term} = \textbf{Con} \cup \textbf{Var}$. For simplicity's sake we do not specify the formal definition for the extensions of graph patterns.
-
 \subsubsection{Graph patterns}
 At the basis of every structured query language of graphs are \term{(basic) graph patterns}, that are related with the graph model that is being queried. In directed edge-labelled graphs the terms are its nodes and edge labels. The terms in property graphs are its ids, labels, properties and values.
 
 Terms are divided into constants and variables. The graph pattern is evaluated against the data graph by generating mappings from the variables of the graph pattern to constants in the data graph, such that the image of the graph pattern obtained by assigning constants to the variables is contained within the graph. 
 
-\begin{definition}[Directed edge-labelled graph pattern]\label{def:directed-edge-labelled-graph-pattern}
-    We define a directed edge-labelled graph pattern as a tuple $Q = (V, E, L)$, where $V \subseteq \textbf{Term}$ is a set of node terms, $L \subseteq \textbf{Term}$ is a set of edge terms, and $E \subseteq V \times L \times V$ is a set of edges (triple patterns).
-\end{definition}
-
-The graph patterns for property graphs are defined analogously as in Definition~\ref{def:directed-edge-labelled-graph-pattern}, allowing variables in any position.
-    
-\begin{definition}[Property graph pattern]\label{def:property-graph-pattern}
-    We define a property graph pattern as a tuple $Q = (V, E, L, P, U, e, l, p)$, where
-    \begin{itemize}
-        \item $V \subseteq \textbf{Term}$ is a set of node id terms,
-        \item $E \subseteq \textbf{Term}$ is a set of edge id terms,
-        \item $L \subseteq \textbf{Term}$ is a set of label terms,
-        \item $P \subseteq \textbf{Term}$ is a set of property terms,
-        \item $U \subseteq \textbf{Term}$ is a set of value terms,
-        \item $e : E \to V \times V$ maps an edge id term to a pair of node id terms,
-        \item $l : V \cup E \to 2^L$ maps a node or edge id term to a set of label terms, and
-        \item $p : V \cup E \to 2^{P \times U}$ maps a node or edge id term to a set of pairs of property–value terms.
-    \end{itemize}
-    \end{definition}
 
 The variables in the graph patterns could be mapped to the same constant terms, but this may not be desirable for all applications. So, various semantics have been proposed to define the evaluation of graph patterns. The most important are:
 \begin{itemize}
@@ -134,14 +87,10 @@ Given an input graph, a graph pattern transforms it into a table of results. The
 \end{itemize}
 Graph patterns can be expressed in a subset of relational algebra formed by $\pi$, $\sigma$, $rho$ and $\bowtie$. Specifically only variables not fixed to a constant can be projected in a graph pattern.
 
-We omit the formal definitions of complex graph patterns and their evaluation since they are a direct consequence of the definitions of the operators listed above.~\footnote{For a more detailed explanation, see Appendix B.2.2 in~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases}.}
-
 \subsubsection{Navigational graph patterns}
 The key difference between graph guery languages id the ability to include \term{path expressions} in queries. A path expression $r$ is a regular expression that allows matching arbitrary length paths between nodes, which is expressed as a \text{regular path query} $(x,r,y)$, where $x$ and $y$ are terms (even the same term). Regular path queries are defined recursively as follows: the base path expression is where $r$ is a constant edge label. If $r$ is a path expression, then also its inverse $r^-$ and Kleene star $r^*$ are also path expressions. Furthermore if $r_1$ and $r_2$ are path expressions, then also their disjuntion $r_1mid r_2$ and their concatenation $r_1\cdot r_2$ are path expressions.
 
 There are various semantics to evaluate regular path queries to account for graphs containing loops, that when evaluated could return infinite matching regular path expressions. For example one can return only the shortest paths or paths without repeated nodes and edges (as done in Cypher). Another option is to return the finite set of pairs of nodes connected by a matching path instead of specifying the entire path.
-
-Also here we refer to~\cite{Angles2017FoundationmodernQueryLnguagesforGraphDatabases} Appendix B.2.3 for the formal inductive definition.
 
 \section{Schema, identity, context}\label{schema-identity-context}
 In this section we describe various enhancements and extensions of the data graph – relating to schema, identity and context – that provide additional structures for accumulating knowledge. Henceforth, we refer to a \term{data graph} as a collection of data represented as nodes and edges using one of the models discussed in~\ref{data-graphs}. We refer to a \term{knowledge graph} as a data graph potentially enhanced with representations of schema, identity, context, ontologies and/or rules. These additional representations may be embedded in the data graph, or layered above it.
@@ -159,6 +108,12 @@ A prominent standard for defining a semantic schema for (RDF) graphs is the \tex
 Semantic schema are typically defined for incomplete graph data, here the absence of an edge between two nodes does not mean that the relation does not hold in the real world. Therefor one can not assume that the graph is a complete description of the world. These systems are said to adopt the \term{Open World Assumption} (OWA), in opposition to the \term{Closed World Assumption} (CWA) , that allows to state with certainty if a relation exists in the world. A consequence of CWA is that the addition of an edge to the data graph may contradict what was previously assumed to be false (due to missing information), whereas with OWA, a statement that is proven false continues to be false with the addition of more edges.
 
 \subsubsection{Validating schema}
+When graphs are used to represent diverse, incomplete data at large-scale, the OWA is the most appropriate choice for a default semantics. But in some scenarios, we may wish to guarantee that our data graph – or specific parts thereof – are in some sense “complete”. We can define such constraints in a validating schema and validate the data graph with respect to the resulting schema, listing constraint violations (if any). Thus while semantic schemata allow for inferring new graph data, validating schemata allow for validating existing graph data. 
+A standard way to define a validating schema for graphs is using \term{shapes}~\cite{Knublauch2017SHACL}\cite{LabraGayo2017ValidatingRDF}\cite{Prudhommeaux2014ShapeExpressions}. A shape \term{targets} a set of nodes in a data graph and specifies \term{constraints} on those nodes. The shape’s target can be defined in many ways, such as targeting all instances of a class, the domain or range of a property, the result of a query, nodes connected to the target of another shape by a given property, etc. Constraints can then be defined on the targeted nodes, such as to restrict the number or types of values taken on a given property. When declaring shapes, the data modeller may not know in advance the entire set of properties that some nodes can have. An \term{open shape} allows the node to have additional properties not specified by the shape, while a \term{closed shape} does not.
+
+Although validating schemata and semantic schemata serve different purposes, they can complement each other. In particular, a validating schema can take into consideration a semantic schema, that, for example, validation is applied on the data graph including inferences. The presence of a semantic schema may, however, require adapting the validating schema. Open shapes may also be preferred in such cases rather than enumerating constraints on all possible properties that may be inferred on a node.
+
+\subsubsection{Emergent schema}
 
 
 \input{figs/tabSemanticSchemaFeatures}
