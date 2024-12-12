@@ -8,6 +8,7 @@ from grape import Graph, GraphVisualizer
 from grape.embedders import Node2VecSkipGramEnsmallen
 import os
 import pandas as pd
+import numpy as np
 import random
 import networkx as nx
 from math import log
@@ -167,3 +168,65 @@ def plot_node_type_distribution(type_counts):
 def plot_type_distribution_with_components(data):
     ax = data.iloc[::-1].plot.barh(stacked=True, figsize=(10, 20))
     ax.set_xscale('log')
+    
+def get_hgcn_embedding(graph_name):
+    with open(f"embeddings/poincare/logs/{graph_name}/embeddings.npy", "rb") as file:
+        vectors = np.load(file)
+    print(f"Embedding vectors shape: {vectors.shape}")
+    return vectors
+
+def plot_poincare_embedding(graph_name, sample_size=None):
+    edges = pd.read_csv(f"{graph_name}.tsv", sep ='\t', header=None)
+    graph = nx.DiGraph() 
+    edges = [row for index, row in edges.iterrows()]
+    graph.add_edges_from(edges)
+    cc = sorted(nx.connected_components(graph.to_undirected()), key=len, reverse=True)
+    print("Connected components: " + " ".join([str(len(g)) for g in cc]))
+    
+    vectors = get_hgcn_embedding(graph_name)
+    
+    labels = graph.nodes.data(False)
+    degrees = [graph.degree(label) for label in labels]
+    colors=[log(degree) if degree>0 else 0 for degree in degrees]
+    
+    if sample_size is not None:
+        n = vectors.shape[0]
+        n_sample=sample_size
+
+        indexes_sample = np.random.choice(n, n_sample, replace=False)
+        x = vectors[indexes_sample,0]
+        y = vectors[indexes_sample,1]
+        
+        colors = [colors[i] for i in indexes_sample]
+        #descriptions_sample = [descriptions[i] for i in indexes_sample] 
+        degrees_sample = [10*degrees[i] for i in indexes_sample]
+        
+        s=degrees_sample
+    else:
+        x = vectors[:,0]
+        y = vectors[:,1]
+        s=None
+        
+
+    plt.close()
+
+    fig, ax = plt.subplots(figsize=(15, 15))
+    plt.style.use('default')
+
+    ax.axis('off')
+    ax.axis('equal')
+
+    plot=ax.scatter(x,y,c=colors,cmap='viridis',s=s,alpha=.4)
+    fig.colorbar(plot,fraction=0.046, pad=0.04, shrink=.7)
+
+    # cursor = mplcursors.cursor(hover=True)
+    # cursor.connect(
+    #      "add", lambda sel: sel.annotation.set_text(descriptions_sample[sel.index]))
+
+
+    # # Some visible labels
+    # sample = random.sample(range(n_sample), 50)
+    # for i in sample:
+    #     ax.text(x[i],y[i],descriptions_sample[i])
+
+    plt.show()
