@@ -26,3 +26,5 @@
 *.npy
 *.pth
 *.txt
+*.png
+*.p
