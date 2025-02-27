@@ -19,17 +19,19 @@ def omim_to_mondo_ids(patient_data):
     return patient_data
 
 def remove_patients_without_disease_connection(patient_conn):
-    patients_with_disease_conns = patient_conn[patient_conn['dest_type'] == 'disease']['patient_id'].unique()
+    patients_with_disease_conns = patient_conn[patient_conn['dest_type'] == 'Disease']['patient_id'].unique()
     patients_without_disease_conns = patient_conn[~patient_conn['patient_id'].isin(patients_with_disease_conns)]['patient_id'].unique()
-    print(len(patients_without_disease_conns))
     for patient in patients_without_disease_conns:
         print(f"Removed patient {patient} without disease connection")
+    print(f"Removed {len(patients_without_disease_conns)} patients without disease connection\n")
     return patient_conn[patient_conn['patient_id'].isin(patients_with_disease_conns)]
 
 if __name__ == "__main__":      
    
     patient_data = pd.read_csv(PATIENT_PATH) \
                         .drop(columns=['source_type', 'Unnamed: 0']).rename(columns={'source_id': 'patient_id'})  
+    
+    patient_data.loc[patient_data['dest_type'] == 'disease', 'dest_type'] = 'Disease'
                  
     print("Standardizing IDs in patient data")
     patient_data = omim_to_mondo_ids(patient_data)
@@ -40,19 +42,24 @@ if __name__ == "__main__":
     for func in standardization_funcs:
         patient_data = standardize_ids(patient_data, func.__name__.split('_')[1], func)
    
+    print("Creating patient connections") 
     
     patient_ids = get_patient_ids(patient_data)
     patient_article_conns = create_patient_article_conns(patient_ids)
+    print(len(patient_article_conns))
     patient_data = pd.concat([patient_data, patient_article_conns])
+    patient_sex_conns = create_patient_sex_conns(patient_data[patient_data['dest_type']=='sex'])
+    print(len(patient_sex_conns))
+    patient_data = pd.concat([patient_data,patient_sex_conns])
     
-    print("Creating patient connections") 
+    
     conns = ['HP', 'Disease', 'Sex', 'Article']
     patient_conn = pd.DataFrame()
     for conn in conns:
         patient_conn = pd.concat([df_patient_connection(patient_data, conn), patient_conn], ignore_index=True)
         
-    print("Removing patients without disease connection")  
-    patient_conn =remove_patients_without_disease_connection(patient_conn)
+    print("Removing patients without disease connection")
+    patient_conn = remove_patients_without_disease_connection(patient_conn)
     
     if SAVE_PATIENT_CONNECTIONS:        
         patient_conn.to_csv(PATIENT_CONNECTIONS, index = False)

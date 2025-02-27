@@ -1,4 +1,4 @@
-DATA_PATH = "../test_data/"
+DATA_PATH = "../data/"
 
 NODES_RAW_FILE = DATA_PATH + "nodesL.csv"
 EDGES_RAW_FILE = DATA_PATH + "edgesL.csv"

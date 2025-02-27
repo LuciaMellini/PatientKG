@@ -49,12 +49,11 @@ def create_patient_article_conns(patient_ids):
     return pd.DataFrame(article_conns)
 
 def create_patient_sex_conns(patient_sex_rows: pd.DataFrame):
-    print(len(patient_sex_rows))
     sex_conns = []
     for _,row in patient_sex_rows.iterrows():
         sex_conns.append({
             'patient_id': row['patient_id'],
-            'dest_id': row['sex_id'],
+            'dest_id': row['dest_id'],
             'dest_type': 'Sex'
         })
     return pd.DataFrame(sex_conns)
