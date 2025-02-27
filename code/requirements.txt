@@ -1,8 +1,0 @@
-igraph
-matplotlib
-networkx
-pandas
-requests
-tqdm
-grape
-graphviz
