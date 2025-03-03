@@ -165,6 +165,26 @@ These assumptions (or lack thereof) define which interpretations are valid, and 
 
 In addition to ones base assumptions, one can associate certain patterns in the data graph with \term{semantic conditions} that define which interpretations satisfy it. For example, if a data graph contains a relation that states that $p$ is a subclass of $q$ one could enforce that if the domain graph there is the edge $(x,y,p)$, also the edge $(x,y,q)$ must exist.
 
+\subsubsection{Model-theoretic semantics}
+The interpretations that satisfy a graph are called \term{models} of a graph. Under the OWA assumption there could be more edges in the model than in the data graph, so potentially the models that satisfy the graph are infinite. To restrict the possible models from the graph one can add so called \term{axioms} to the graph to enforce some condition(s) on the interpretations that satisfy the graph. These axioms are provided like the definitions exemplified in Table~\ref{tab:semanticSchemaFeatures}. If one of the listed features holds, the condition has to be satisfied by the model. These restrictions can be applied to node classes and edge properties.
+
+\subsubsection{Entailment}
+One graph can be said to \term{entail} another if and only if any model of the former graph is also a model of the latter graph. intuitively, this means that the latter graph says nothing more over the former graph and thus holds as a logical consequence of the former graph. 
+
+Unfortunately, given two graphs, per the defined notion of entailment and for all the ontological features listed in Tables 3-5 in~\cite{Hogan2021KGs} is undecidable\footnote{A decision problem is undecidable when there does not exist an algorithms that halts on all inputs with the correct answer.} to determine if one entails the other~\cite{Hitzler2010FoundationsSWTechnologies}. However, we can provide practical reasoning algorithms for ontologies that 
+
+\begin{enumerate*}[label=(\roman*),before=\unskip{ i.e., }, itemjoin={{, }}, itemjoin*={{, or }}]
+    \item\label{opt_1} halt on any input ontology but may miss entailments, returning false instead of true 
+    \item\label{opt_2} always halt with the correct answer but only accept input ontologies with restricted features 
+    \item\label{opt_3} only return     correct answers for any input ontology but may never halt on certain inputs 
+    \end{enumerate*}
+
+Though option \ref{opt_3} has been explored using theorem provers for First Order Logic~\cite{Schneider2011ReasoningOWL2Full}, options \ref{opt_1} and \ref{opt_2} are more commonly pursued using rules and/or Description Logics. Option \ref{opt_1} generally allows for more efficient and scalable reasoning algorithms and is useful where data are incomplete and having some entailments is valuable. Option \ref{opt_2} may be a better choice in domains - such as medical ontologies - where missing entailments may have undesirable outcomes.
+
+\section{Inductive knowledge}
+While deductive knowledge is characterised by precise logical consequences, inductively acquiring knowledge involves generalising patterns from a given set of input observations, which can then be used to generate novel but potentially imprecise predictions. We then refer to knowledge acquired inductively as \term{inductive knowledge}, which includes both the models used to encode patterns, as well as the predictions made by those models. Though fallible, inductive knowledge can be highly valuable.  
+
+There exist various inductive techniques typically applied to knowledge graphs. In the case of unsupervised methods, there is a rich body of work on graph analytics, which uses well-known functions/algorithms to detect communities or clusters, find central nodes and edges, etc., in a graph. Alternatively, knowledge graph embeddings can use self-supervision to learn a low-dimensional numeric model of a knowledge graph used in various prediction tasks. The structure of graphs can also be directly leveraged for supervised learning, as explored in the context of graph neural networks. Finally, while the aforementioned techniques learn numerical models, symbolic learning can learn symbolic models – i.e., logical formulae in the form of rules or axioms – from a graph in a self-supervised manner. We explore the realm of supervised learning over knowledge graphs in the following chapter.
 
 
 \section{Applications in biomedicine}\label{biomed}
