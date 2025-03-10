@@ -17,7 +17,6 @@ For experimentation purposes we have used various knowledge base created using P
 <a name="fn4">4</a> Peter Robinson, Daniel Danis, Lex Dingemans, adamklocperk, Peter Hansen, & tudorgroza. (2024). monarch-initiative/phenopacket-store: 0.1.21 (0.1.21). Zenodo.
 
 ## Contents
-At the moment the repository is populated by:
-* `utils` directory containing the following:
-    * `prepareData.py`, the script to build the KG we have worked on, mainly by incorporating the KG with the patient information
-    * `KG_analysis/KG_analysis.ipynb`, a notebook that describes the characteristics of the used KG
+At the moment the main features of the repository are the following:
+ * `utils/prepareData.py`, the script to build the KG we have worked on, mainly by incorporating the KG with the patient information
+ * `KG_analysis/KG_analysis.ipynb`, a notebook that describes the characteristics of the used KG
