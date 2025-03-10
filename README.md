@@ -21,4 +21,3 @@ At the moment the repository is populated by:
 * `utils` directory containing the following:
     * `prepareData.py`, the script to build the KG we have worked on, mainly by incorporating the KG with the patient information
     * `KG_analysis/KG_analysis.ipynb`, a notebook that describes the characteristics of the used KG
-* `thesis` directory dedicated to the $\LaTeX$ source code and resources used to produce the report in PDF format in the [release]()
