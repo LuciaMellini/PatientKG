@@ -1,4 +1,4 @@
-# Integration of KGs biomedical application
+# Integration of underlying KG and patient data for biomedical application
 
 ## Abstract
 Over the past year, there has been significant progress in automating the collection, integration, and analysis of biomedical data through knowledge graphs (KGs), which represent entities (e.g., proteins, drugs) and their relationships. KGs have been used in areas like RNA-targeted therapies [[1]](#fn1). Graph representation learning techniques [[2]](#fn2), such as graph neural networks, help extract insights from KGs by predicting new relationships between entities. However, a gap persists between case-specific predictions and generalized knowledge from KGs.
