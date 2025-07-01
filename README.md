@@ -5,7 +5,7 @@ Over the past year, there has been significant progress in automating the collec
 
 The goal is to develop an approach that integrates specific sample data with broad knowledge from knowledge graphs (KGs), while also deriving new relationships within a KG based on information from specific sample data. This involves linking nodes representing individual patients or samples to broader concepts like genes or RNA molecules. Secondly, given the vast number of nodes in a KG compared to the often limited number of cases in medical studies, new techniques should be developed to process a KG in a way that biases its representation to retain information from less represented nodes.
 
-For experimentation purposes we have used various knowledge base created using PheKnowLator[[3]][#fn3], described in the report, and patient data contained in the 0.1.21 v. cohort of GA4GH Phenopackets[[4]][#fn4] that represent individuals with Mendelian diseases.
+For experimentation purposes we have used various knowledge base created using PheKnowLator[[3]](#fn3), described in the report, and patient data contained in the 0.1.21 v. cohort of GA4GH Phenopackets[[4]](#fn4) that represent individuals with Mendelian diseases.
 
 ## References
 <a name="fn1">1</a> Cavalleri, ..., Casiraghi, Valentini, Mesiti. RNA-KG: An ontology-based knowledge graph for representing interactions involving RNA molecules.
